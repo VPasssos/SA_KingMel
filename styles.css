@@ -1,0 +1,17 @@
+:root {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    --mel-claro: #f6e9b2;         /* tom mais claro de mel */
+    --mel-dourado: #f1c453;       /* dourado puxado pro mel */
+    --mel-ambar: #e0a500;         /* âmbar/mel mais escuro */
+    --marrom-suave: #8b5e3c;      /* tom de marrom que remete ao favo */
+    --creme-claro: #fffaf0;       /* base neutra clara */
+    --vidro-mel: rgba(240, 180, 60, 0.08);  /* vidro com toque de mel */
+
+    --primary-color: var(--mel-dourado);
+    --hover-color: var(--mel-ambar);
+    --text-color: var(--marrom-suave);
+    --input-bg: var(--creme-claro);
+    --shadow-color: rgba(139, 94, 60, 0.1); /* sombra marrom suave */
+    --placeholder-color: #c4a484; /* cor suave para texto de placeholder */
+}

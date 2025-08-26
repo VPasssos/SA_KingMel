@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Exemplo de Cores - Paleta Mel</title>
+  <style>
+    :root {
+      --mel-claro: #f6e9b2;   
+      --mel-dourado: #f1c453;     
+      --mel-ambar: #e0a500;       
+      --marrom-suave: #8b5e3c;      
+      --creme-claro: #fffaf0;       
+      --vidro-mel: rgba(240, 180, 60, 0.08); 
+    }
+
+    body {
+      padding: 20px;
+      background-color: var(--creme-claro);
+      font-family: Arial, sans-serif;
+      color: var(--marrom-suave);
+    }
+
+    .cor {
+      padding: 20px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .mel-claro {
+      background-color: var(--mel-claro);
+      color: black;
+    }
+
+    .mel-dourado {
+      background-color: var(--mel-dourado);
+    }
+
+    .mel-ambar {
+      background-color: var(--mel-ambar);
+    }
+
+    .marrom-suave {
+      background-color: var(--marrom-suave);
+    }
+
+    .vidro-mel {
+      background-color: var(--vidro-mel);
+      color: black;
+      border: 1px solid var(--mel-dourado);
+    }
+  </style>
+</head>
+<body>
+  <h1>Exemplo de Cores - Paleta Mel</h1>
+  <div class="cor mel-claro">Mel Claro - #f6e9b2</div>
+  <div class="cor mel-dourado">Mel Dourado - #f1c453</div>
+  <div class="cor mel-ambar">Mel Âmbar - #e0a500</div>
+  <div class="cor marrom-suave">Marrom Suave - #8b5e3c</div>
+  <div class="cor vidro-mel">Vidro Mel (translúcido) - rgba(240, 180, 60, 0.08)</div>
+</body>
+</html>
