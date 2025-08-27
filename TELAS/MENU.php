@@ -17,13 +17,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <ul id="dock_items">
             <li class="dock-item <?= ($currentPage == 'TELAS/TELA_INICIAL.php') ? 'active' : '' ?>">
                 <a href="TELA_INICIAL.php">
-                    <i class="fa-solid fa-crown"></i>
-                </a>
-            </li>
-
-            <li class="dock-item <?= ($currentPage == 'TELA_FINANCEIRO.php') ? 'active' : '' ?>">
-                <a href="TELA_FINANCEIRO.php">
-                    <i class="fa-solid fa-chart-line"></i>
+                    <i class="fa-solid fa-house"></i>
                 </a>
             </li>
 
@@ -35,12 +29,18 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
             <li class="dock-item <?= ($currentPage == '#') ? 'active' : '' ?>">
                 <a href="#">
-                    <i class="fa-solid fa-box"></i>
+                    <i class="fa-solid fa-user"></i>
                 </a>
             </li>
 
-            <li class="dock-item <?= ($currentPage == 'logout.php') ? 'active' : '' ?>">
-                <a href="logout.php">
+            <li class="dock-item <?= ($currentPage == '#') ? 'active' : '' ?>">
+                <a href="#">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </li>
+
+            <li class="dock-item <?= ($currentPage == '../logout.php') ? 'active' : '' ?>">
+                <a href="../logout.php">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </a>
             </li>
