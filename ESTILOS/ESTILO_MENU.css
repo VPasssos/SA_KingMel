@@ -59,11 +59,11 @@ main {
 }
 
 .dock-item.active {
-    background-color: var(--primaria-verde);
+    background-color: var(--primaria-amarelo);
 }
 
 .dock-item:hover:not(.active) {
-    background-color: var(--secundaria-verde);
+    background-color: var(--secundaria-amarelo);
 }
 
 .dock-item a {

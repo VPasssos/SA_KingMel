@@ -30,7 +30,7 @@ body {
 }
 
 .card_login > h1 {
-    color: var(--primaria-verde);
+    color: var(--primaria-amarelo);
     font-weight: 800;
     margin: 0 0 1.5rem 0;
     font-size: 2.2rem;

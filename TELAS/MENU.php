@@ -15,27 +15,27 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <nav id="dock"> 
     <div id="dock_content">
         <ul id="dock_items">
-            <li class="dock-item <?= ($currentPage == 'TELAS/TELA_INICIAL.php') ? 'active' : '' ?>">
+            <li class="dock-item <?= ($currentPage == 'TELA_INICIAL.php') ? 'active' : '' ?>">
                 <a href="TELA_INICIAL.php">
                     <i class="fa-solid fa-house"></i>
                 </a>
             </li>
 
-            <li class="dock-item <?= ($currentPage == '#') ? 'active' : '' ?>">
-                <a href="#">
-                    <i class="fa-solid fa-user"></i>
+            <li class="dock-item <?= ($currentPage == 'TELA_GERENCIAR_PRODUTOS.php') ? 'active' : '' ?>">
+                <a href="TELA_GERENCIAR_PRODUTOS.php">
+                <i class="fa-solid fa-box-archive"></i>
                 </a>
             </li>
 
-            <li class="dock-item <?= ($currentPage == '#') ? 'active' : '' ?>">
-                <a href="#">
-                    <i class="fa-solid fa-user"></i>
+            <li class="dock-item <?= ($currentPage == 'TELA_GERENCIAR_FORNECEDORES.php') ? 'active' : '' ?>">
+                <a href="TELA_GERENCIAR_FORNECEDORES.php">
+                    <i class="fa-solid fa-truck"></i>
                 </a>
             </li>
-
-            <li class="dock-item <?= ($currentPage == '#') ? 'active' : '' ?>">
-                <a href="#">
-                    <i class="fa-solid fa-user"></i>
+            
+            <li class="dock-item <?= ($currentPage == 'TELA_GERENCIAR_USUARIOS.php') ? 'active' : '' ?>">
+                <a href="TELA_GERENCIAR_USUARIOS.php">
+                    <i class="fa-solid fa-users"></i>
                 </a>
             </li>
 
