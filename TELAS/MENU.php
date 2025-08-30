@@ -32,6 +32,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <i class="fa-solid fa-truck"></i>
                 </a>
             </li>
+
+            <li class="dock-item <?= ($currentPage == 'TELA_GERENCIAR_FUNCIONARIOS.php') ? 'active' : '' ?>">
+                <a href="TELA_GERENCIAR_FUNCIONARIOS.php">
+                <i class="fa-solid fa-box-archive"></i>
+                </a>
+            </li>
             
             <li class="dock-item <?= ($currentPage == 'TELA_GERENCIAR_USUARIOS.php') ? 'active' : '' ?>">
                 <a href="TELA_GERENCIAR_USUARIOS.php">
@@ -39,8 +45,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
-            <li class="dock-item <?= ($currentPage == '../logout.php') ? 'active' : '' ?>">
-                <a href="../logout.php">
+            <li class="dock-item <?= ($currentPage == 'TELA_GERENCIAR_CLIENTES.php') ? 'active' : '' ?>">
+                <a href="TELA_GERENCIAR_CLIENTES.php">
+                <i class="fa-solid fa-box-archive"></i>
+                </a>
+            </li>
+
+            <li class="dock-item <?= ($currentPage == 'index.php') ? 'active' : '' ?>">
+                <a href="index.php">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </a>
             </li>
