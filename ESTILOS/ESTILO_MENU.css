@@ -85,3 +85,49 @@ main {
 .dock-item i {
     font-size: 18px;
 }
+
+.user-info {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+
+}
+
+.dock-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dock-item.disabled a {
+    pointer-events: none;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.dock-item:hover .tooltip {
+    opacity: 1;
+}
+
+.dock-item.disabled:hover .tooltip {
+    background: rgba(255,0,0,0.8);
+}

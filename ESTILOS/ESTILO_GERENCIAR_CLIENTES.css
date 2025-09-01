@@ -19,7 +19,7 @@ h1 {
     font-weight: 600;
 }
 
-.ops_usu {
+.ops_cli {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -27,7 +27,7 @@ h1 {
     gap: 20px;
 }
 
-.ops_usu button {
+.ops_cli button {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -38,16 +38,16 @@ h1 {
     transition: background-color 0.3s;
 }
 
-.ops_usu button:hover {
+.ops_cli button:hover {
     background-color: var(--hover-color);
 }
 
-.ops_usu form {
+.ops_cli form {
     display: flex;
     gap: 10px;
 }
 
-.ops_usu input {
+.ops_cli input {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -55,22 +55,18 @@ h1 {
     background-color: var(--input-bg);
 }
 
-.ops_usu input:focus {
+.ops_cli input:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(224, 165, 0, 0.2);
 }
 
-.tabela_usu {
+.tabela_cli {
     margin-top: 20px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 12px var(--shadow-color);
     overflow: hidden;
-}
-
-.tabela_usu p {
-    text-align: center;
 }
 
 .table {
@@ -137,7 +133,7 @@ h1 {
     padding: 30px;
     border-radius: 10px;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -160,7 +156,8 @@ h1 {
 }
 
 .modal-content input,
-.modal-content select {
+.modal-content select,
+.modal-content textarea {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -168,7 +165,8 @@ h1 {
 }
 
 .modal-content input:focus,
-.modal-content select:focus {
+.modal-content select:focus,
+.modal-content textarea:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(224, 165, 0, 0.2);
@@ -198,18 +196,24 @@ h1 {
     background-color: #7f8c8d;
 }
 
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
-    .ops_usu {
+    .ops_cli {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .ops_usu form {
+    .ops_cli form {
         width: 100%;
     }
     
-    .ops_usu input {
+    .ops_cli input {
         width: 100%;
     }
     
@@ -221,5 +225,9 @@ h1 {
     .modal-content {
         width: 95%;
         padding: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
     }
 }

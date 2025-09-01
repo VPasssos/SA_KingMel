@@ -1,14 +1,19 @@
--<?php
+<?php
+// Configurações para a conexão com o banco de dados
+
 $host = 'localhost';
-$dbname = 'king';
+$dbname = 'sa_kingmel';
 $user = 'root';
 $pass = '';
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 } catch (PDOException $e) {
     die("Erro de conexão com o banco de dados: " . $e->getMessage());
+
 }
+
 ?>
+
