@@ -1,4 +1,49 @@
 <?php
+
+// FUNÇÃO PARA REDIMENSIONAR IMAGEM
+
+function redimensionarImagem($imagem,$largura,$altura){
+    //OBTEM AS DIMENSÕES ORIGINAIS DA IMAGEM
+    // GETIMAGESIZE() RETORNA A LARGURA E ALTURA DE UMA IMAGEM
+
+    list($larguraOriginal,$alturaOriginal)=getimagesize($imagem);
+
+    //CRIA UMA NOVA IMAGEM EM BRANCO COM AS NOVAS DIMENSÕES
+
+    $novaImagem = imagecreatetruecolor($largura,$altura);
+
+    // CARREGA A IMAGEM ORIGINAL(jprg) A PARTIR DO ARQUIVO
+
+    $imagemOriginal = imagecreatefromjpeg($imagem);
+
+    //COPIA E REDIMENSIONA A IMAGEM ORIGINAL PARA A NOVA
+    //imagecopyresampled() -- COPIA E REDIMENSIONAMENTO E SUAVIZAÇÃO
+
+    imagecopyresampled($novaImagem,$imagemOriginal,0,0,0,0, $largura,$altura,$larguraOriginal,$alturaOriginal);
+
+    //INICIA UM BUFFER PARA GUARDAR A IMAGEM COMO TEXTO BINARIO
+    //ob_start() -- INICIA O "output buffering" GUARDANDO A SAIDA
+    
+    ob_start();
+
+    //imagejpeg() ENVIA A IMAGEM PARA O OUTPUT (QUE VAI PRO BUFFER)
+
+    imagejpeg($novaImagem);
+
+    //OB_GET_CLEAN() -- PEGAR O CONTEUDO DO BUFFEER E LIMPA
+
+    $dadosImagem = ob_get_clean();
+
+    //LIBERA A MEMORIA USADA PELAS IMAGENS
+    //imagedestroy() -- LIMPA A M,EMORIA DA IMAGEM CRIADA
+
+    imagedestroy($novaImagem);
+    imagedestroy($imagemOriginal);
+
+    //RETORNA A IMAGEM REDIMENSIONADA EM FORMATO BINARIO
+    return $dadosImagem;
+}
+
 session_start();
 include('../conexao.php'); // Inclui a conexão com o banco de dados
 
@@ -81,20 +126,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_produto']))
     $Peso = $_POST['Peso'];
     $Preco = $_POST['Preco'];
     $Quantidade = $_POST['Quantidade'];
+    $nomeFoto = $_FILES['foto']['name']; //PEGA O NOME ORIGINAL DO ARQUIVO
+    $tipoFoto = $_FILES['foto']['type']; //PEGA O TIPO mime DA IMAGEM
     $id_apiario = $_POST['id_apiario'];
+
+    $foto = redimensionarImagem($_FILES['foto']['tmp_name'],300,400);
+
 
     try {
         $pdo->beginTransaction();
         
         // Inserir o produto
-        $sql = "INSERT INTO produto (Tipo_mel, Data_embalado, Peso, Preco, Quantidade) 
-                VALUES (:Tipo_mel, :Data_embalado, :Peso, :Preco, :Quantidade)";
+        $sql = "INSERT INTO produto (Tipo_mel, Data_embalado, Peso, Preco, Quantidade, nome_foto, tipo_foto, foto) 
+                VALUES (:Tipo_mel, :Data_embalado, :Peso, :Preco, :Quantidade,:nome_foto, :tipo_foto, :foto)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':Tipo_mel', $Tipo_mel);
         $stmt->bindParam(':Data_embalado', $Data_embalado);
         $stmt->bindParam(':Peso', $Peso);
         $stmt->bindParam(':Preco', $Preco);
         $stmt->bindParam(':Quantidade', $Quantidade);
+        $stmt->bindParam(':nome_foto',$nomeFoto);//LIGA OS PARAMETROS ÁS VARIAVEIS
+        $stmt->bindParam(':tipo_foto',$tipoFoto);//LIGA OS PARAMETROS ÁS VARIAVEIS
+        $stmt->bindParam(':foto',$foto,PDO::PARAM_LOB);//O LOB É IGUAL  Large OBject USADO PARA DADOS BINARIOS COMO IMAGENS
+
+        
         $stmt->execute();
         
         $id_produto = $pdo->lastInsertId();
@@ -131,14 +186,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_produto'])) {
     $Quantidade = $_POST['Quantidade'];
     $id_apiario = $_POST['id_apiario'];
 
+    $temNovaImagem = isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK;
+
     try {
         $pdo->beginTransaction();
-        
-        // Atualizar o produto
-        $sql = "UPDATE produto SET Tipo_mel = :Tipo_mel, Data_embalado = :Data_embalado, 
-                Peso = :Peso, Preco = :Preco, Quantidade = :Quantidade 
-                WHERE id_produto = :id_produto";
-        $stmt = $pdo->prepare($sql);
+
+        if ($temNovaImagem) {
+            $nomeFoto = $_FILES['foto']['name'];
+            $tipoFoto = $_FILES['foto']['type'];
+            $foto = redimensionarImagem($_FILES['foto']['tmp_name'], 300, 400);
+
+            // Atualiza TUDO incluindo a imagem
+            $sql = "UPDATE produto 
+                    SET Tipo_mel = :Tipo_mel, Data_embalado = :Data_embalado, 
+                        Peso = :Peso, Preco = :Preco, Quantidade = :Quantidade,
+                        nome_foto = :nome_foto, tipo_foto = :tipo_foto, foto = :foto
+                    WHERE id_produto = :id_produto";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':nome_foto', $nomeFoto);
+            $stmt->bindParam(':tipo_foto', $tipoFoto);
+            $stmt->bindParam(':foto', $foto, PDO::PARAM_LOB);
+        } else {
+            // Atualiza apenas os dados, sem imagem
+            $sql = "UPDATE produto 
+                    SET Tipo_mel = :Tipo_mel, Data_embalado = :Data_embalado, 
+                        Peso = :Peso, Preco = :Preco, Quantidade = :Quantidade
+                    WHERE id_produto = :id_produto";
+            $stmt = $pdo->prepare($sql);
+        }
+
         $stmt->bindParam(':id_produto', $id_produto);
         $stmt->bindParam(':Tipo_mel', $Tipo_mel);
         $stmt->bindParam(':Data_embalado', $Data_embalado);
@@ -146,15 +222,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_produto'])) {
         $stmt->bindParam(':Preco', $Preco);
         $stmt->bindParam(':Quantidade', $Quantidade);
         $stmt->execute();
-        
+
         // Atualizar relação com apiário
-        // Primeiro remover relações existentes
         $sql_delete_relacao = "DELETE FROM apiario_produto WHERE id_produto = :id_produto";
         $stmt_delete = $pdo->prepare($sql_delete_relacao);
         $stmt_delete->bindParam(':id_produto', $id_produto);
         $stmt_delete->execute();
-        
-        // Adicionar nova relação, se apiário foi selecionado
+
         if (!empty($id_apiario)) {
             $sql_relacao = "INSERT INTO apiario_produto (id_apiario, id_produto) 
                            VALUES (:id_apiario, :id_produto)";
@@ -163,18 +237,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_produto'])) {
             $stmt_relacao->bindParam(':id_produto', $id_produto);
             $stmt_relacao->execute();
         }
-        
+
         $pdo->commit();
         echo "<script>alert('Produto alterado com sucesso!');</script>";
-        
     } catch (Exception $e) {
         $pdo->rollBack();
         echo "<script>alert('Erro ao alterar produto!');</script>";
     }
-    
+
     header("Location: TELA_GERENCIAR_PRODUTOS.php");
     exit();
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acresentar_produto'])) {
     $id_produto = $_POST['id_produto'];
@@ -223,6 +297,10 @@ if (isset($_GET['editar'])) {
     $stmt->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
     $stmt->execute();
     $produto_edicao = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($produto_edicao && isset($produto_edicao['foto'])) {
+        $imagemBase64 = base64_encode($produto_edicao['foto']);
+    }
     
     // Buscar apiário relacionado ao produto
     if ($produto_edicao) {
@@ -288,11 +366,13 @@ if (isset($_GET['repor'])) {
                             <th>Preço (R$)</th>
                             <th>Quantidade</th>
                             <th>Apiário</th>
+                            <th>Imagem do produto</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($produtos as $produto): ?>
+
                             <tr>
                                 <td><?= htmlspecialchars($produto['id_produto']) ?></td>
                                 <td><?= htmlspecialchars($produto['Tipo_mel']) ?></td>
@@ -301,6 +381,8 @@ if (isset($_GET['repor'])) {
                                 <td>R$ <?= number_format($produto['Preco'], 2, ',', '.') ?></td>
                                 <td><?= htmlspecialchars($produto['Quantidade']) ?></td>
                                 <td><?= htmlspecialchars($produto['Nome_apiario'] ?? 'Não vinculado') ?></td>
+                                <td><img src="data:<?=$produto['tipo_foto']?>;base64,<?=base64_encode($produto['foto'])?>" alt="Foto do produto" width="50" height="auto">
+                                </td>
                                 <td>
                                     <a href="TELA_GERENCIAR_PRODUTOS.php?repor=<?= htmlspecialchars($produto['id_produto']) ?>">Repor</a>
                                     <a href="TELA_GERENCIAR_PRODUTOS.php?editar=<?= htmlspecialchars($produto['id_produto']) ?>">Alterar</a>
@@ -322,7 +404,7 @@ if (isset($_GET['repor'])) {
     <div id="modalAdicionar" class="modal">
         <div class="modal-content">
             <h2>Adicionar Produto</h2>
-            <form method="POST" action="TELA_GERENCIAR_PRODUTOS.php">
+            <form method="POST" action="TELA_GERENCIAR_PRODUTOS.php" enctype="multipart/form-data">
                 <label for="Tipo_mel">Tipo de Mel:</label>
                 <input type="text" name="Tipo_mel" required onkeypress ="mascara(this, nomeM)">
 
@@ -337,6 +419,11 @@ if (isset($_GET['repor'])) {
 
                 <label for="Quantidade">Quantidade:</label>
                 <input type="number" name="Quantidade" min="0" required>
+
+                <div class="imagem_produto">
+                    <label for="foto">Imagem do produto:</label>
+                    <input type="file" name="foto" min="0" required>
+                </div>
 
                 <label for="id_apiario">Apiário de Origem:</label>
                 <select name="id_apiario">
@@ -359,7 +446,7 @@ if (isset($_GET['repor'])) {
     <div id="modalAlterar" class="modal" style="display: flex;">
         <div class="modal-content">
             <h2>Alterar Produto</h2>
-            <form method="POST" action="TELA_GERENCIAR_PRODUTOS.php">
+            <form method="POST" action="TELA_GERENCIAR_PRODUTOS.php" enctype="multipart/form-data">
                 <input type="hidden" name="id_produto" value="<?= $produto_edicao['id_produto'] ?>">
                 
                 <label for="Tipo_mel_editar">Tipo de Mel:</label>
@@ -373,6 +460,13 @@ if (isset($_GET['repor'])) {
 
                 <label for="Preco_editar">Preço (R$):</label>
                 <input type="number" name="Preco" id="Preco_editar" step="0.01" min="0" value="<?= $produto_edicao['Preco'] ?>" required>
+
+                <label for="foto_alterar">Foto atual:</label>
+                <img src="data:<?= htmlspecialchars($produto_edicao['tipo_foto']); ?>;base64,<?= $imagemBase64 ?>" alt="Foto do produto" width="150" height="auto" />
+
+                <label for="nova_foto">Nova imagem (opcional):</label>
+                <input type="file" name="foto">
+
 
                 <label for="Quantidade_editar">Quantidade:</label>
                 <input type="number" name="Quantidade" id="Quantidade_editar" min="0" value="<?= $produto_edicao['Quantidade'] ?>" required>
