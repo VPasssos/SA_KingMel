@@ -337,8 +337,8 @@ if (isset($_GET['repor'])) {
     <title>GERENCIAR PRODUTOS</title>
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
+    <link rel="stylesheet" href="../ESTILOS/ESTILO_IMAGENS.css">
     <script src="../JS/mascaras.js"></script>
-
 </head>
 <body>
     <?php include("MENU.php"); ?>
