@@ -167,6 +167,7 @@ if (isset($_POST['gerar_csv'])) {
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_RELATORIOS.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../JS/mascaras.js"></script>
     
 </head>
 <body>

@@ -130,6 +130,7 @@ if (isset($_GET['editar'])) {
     <title>GERENCIAR CLIENTES</title>
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_CLIENTES.css">
+    <script src="../JS/mascaras.js"></script>
 
 </head>
 <body>
@@ -195,7 +196,7 @@ if (isset($_GET['editar'])) {
                 <div class="form-row">
                     <div>
                         <label for="Nome">Nome Completo:</label>
-                        <input type="text" name="Nome" required>
+                        <input type="text" name="Nome" required onkeypress ="mascara(this, nomeM)">
                     </div>
                     <div>
                         <label for="CPF">CPF:</label>
@@ -241,7 +242,7 @@ if (isset($_GET['editar'])) {
                 <div class="form-row">
                     <div>
                         <label for="Nome_editar">Nome Completo:</label>
-                        <input type="text" name="Nome" id="Nome_editar" value="<?= htmlspecialchars($cliente_edicao['Nome']) ?>" required>
+                        <input type="text" name="Nome" id="Nome_editar" value="<?= htmlspecialchars($cliente_edicao['Nome']) ?>" required onkeypress ="mascara(this, nomeM)">
                     </div>
                     <div>
                         <label for="CPF_editar">CPF:</label>

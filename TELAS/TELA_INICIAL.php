@@ -177,13 +177,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buscar_vendas'])) {
             </div>
         <?php endif; ?>
 
-        <!-- <div class="busca-vendas">
+        <div class="busca-vendas">
             <h2>Buscar Vendas</h2>
             <form class="busca-form" method="POST" action="">
                 <input type="text" name="termo_busca" placeholder="Nº pedido, cliente ou endereço" value="<?= isset($_POST['termo_busca']) ? htmlspecialchars($_POST['termo_busca']) : '' ?>">
                 <button type="submit" name="buscar_vendas">Buscar</button>
             </form>
-        </div> -->
+        </div>
 
         <?php if(!empty($vendas_busca)): ?>
             <div class="card">

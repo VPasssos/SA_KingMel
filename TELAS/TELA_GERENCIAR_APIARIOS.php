@@ -126,6 +126,7 @@ if (isset($_GET['editar'])) {
     <title>GERENCIAR APIÁRIOS</title>
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_APIARIOS.css">
+    <script src="../JS/mascaras.js"></script>
 
 </head>
 <body>
@@ -187,13 +188,13 @@ if (isset($_GET['editar'])) {
             <h2>Adicionar Apiário</h2>
             <form method="POST" action="TELA_GERENCIAR_APIARIOS.php">
                 <label for="Nome_apiario">Nome do Apiário:</label>
-                <input type="text" name="Nome_apiario" required>
+                <input type="text" name="Nome_apiario" required onkeypress ="mascara(this, nomeM)">
 
                 <label for="CNPJ">CNPJ:</label>
-                <input type="text" name="CNPJ" placeholder="00.000.000/0000-00" required>
+                <input type="text" name="CNPJ" placeholder="00.000.000/0000-00" required onkeypress ="mascara(this, cnpjM)">
 
                 <label for="Quantidade">Quantidade de Colmeias:</label>
-                <input type="number" name="Quantidade" min="0" required>
+                <input type="number" name="Quantidade" min="0" required onkeypress ="mascara(this, qtdeM)">
 
                 <label for="Data_inicio">Data de Início:</label>
                 <input type="date" name="Data_inicio" required>
@@ -216,7 +217,7 @@ if (isset($_GET['editar'])) {
                 <input type="hidden" name="id_apiario" value="<?= $apiario_edicao['id_apiario'] ?>">
                 
                 <label for="Nome_apiario_editar">Nome do Apiário:</label>
-                <input type="text" name="Nome_apiario" id="Nome_apiario_editar" value="<?= htmlspecialchars($apiario_edicao['Nome_apiario']) ?>" required>
+                <input type="text" name="Nome_apiario" id="Nome_apiario_editar" value="<?= htmlspecialchars($apiario_edicao['Nome_apiario']) ?>" required onkeypress ="mascara(this, nomeM)">
 
                 <label for="CNPJ_editar">CNPJ:</label>
                 <input type="text" name="CNPJ" id="CNPJ_editar" value="<?= htmlspecialchars($apiario_edicao['CNPJ']) ?>" required>

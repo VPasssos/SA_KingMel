@@ -115,6 +115,7 @@ if (isset($_GET['editar'])) {
     <title>GERENCIAR USUÁRIOS</title>
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_USUARIOS.css">
+    <script src="../JS/mascaras.js"></script>
     
 </head>
 <body>
@@ -172,7 +173,7 @@ if (isset($_GET['editar'])) {
             <h2>Adicionar Usuário</h2>
             <form method="POST" action="TELA_GERENCIAR_USUARIOS.php">
                 <label for="nome">Nome:</label>
-                <input type="text" name="nome" required>
+                <input type="text" name="nome" required onkeypress ="mascara(this, nomeM)">
 
                 <label for="email">E-mail:</label>
                 <input type="email" name="email" required>
@@ -202,7 +203,7 @@ if (isset($_GET['editar'])) {
                 <input type="hidden" name="id_usuario" value="<?= $usuario_edicao['id_usuario'] ?>">
                 
                 <label for="nome_editar">Nome:</label>
-                <input type="text" name="nome" id="nome_editar" value="<?= htmlspecialchars($usuario_edicao['nome']) ?>" required>
+                <input type="text" name="nome" id="nome_editar" value="<?= htmlspecialchars($usuario_edicao['nome']) ?>" required onkeypress ="mascara(this, nomeM)">
 
                 <label for="email_editar">E-mail:</label>
                 <input type="email" name="email" id="email_editar" value="<?= htmlspecialchars($usuario_edicao['email']) ?>" required>

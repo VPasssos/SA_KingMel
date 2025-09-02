@@ -176,6 +176,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_produto'])) {
     exit();
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acresentar_produto'])) {
+    $id_produto = $_POST['id_produto'];
+    $Quantidade = $_POST['Quantidade'];
+    
+
+    try {
+        $pdo->beginTransaction();
+        
+        // Atualizar o produto
+        $sql = "UPDATE produto 
+                SET Quantidade = Quantidade + :quantidade 
+                WHERE id_produto = :id_produto";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':id_produto', $id_produto);
+        $stmt->bindParam(':quantidade', $Quantidade);
+        $stmt->execute();
+        
+        $pdo->commit();
+        echo "<script>alert('Produto reposto com sucesso!');</script>";
+        
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo "<script>alert('Erro ao repor produto!');</script>";
+    }
+    
+    header("Location: TELA_GERENCIAR_PRODUTOS.php");
+    exit();
+}
+
 // Verifica se há um termo de busca
 $produtos = isset($_POST['busca']) ? buscarProdutos($pdo, $_POST['busca']) : buscarProdutos($pdo);
 
@@ -208,6 +237,18 @@ if (isset($_GET['editar'])) {
         }
     }
 }
+// Função para buscar produto para repor
+$produto_repor = null;
+if (isset($_GET['repor'])) {
+    $id_produto = $_GET['repor'];
+    
+    // Buscar dados do produto
+    $sql = "SELECT * FROM produto WHERE id_produto = :id_produto";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
+    $stmt->execute();
+    $produto_repor = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -218,6 +259,7 @@ if (isset($_GET['editar'])) {
     <title>GERENCIAR PRODUTOS</title>
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
+    <script src="../JS/mascaras.js"></script>
 
 </head>
 <body>
@@ -260,6 +302,7 @@ if (isset($_GET['editar'])) {
                                 <td><?= htmlspecialchars($produto['Quantidade']) ?></td>
                                 <td><?= htmlspecialchars($produto['Nome_apiario'] ?? 'Não vinculado') ?></td>
                                 <td>
+                                    <a href="TELA_GERENCIAR_PRODUTOS.php?repor=<?= htmlspecialchars($produto['id_produto']) ?>">Repor</a>
                                     <a href="TELA_GERENCIAR_PRODUTOS.php?editar=<?= htmlspecialchars($produto['id_produto']) ?>">Alterar</a>
                                     <a href="TELA_GERENCIAR_PRODUTOS.php?excluir=<?= htmlspecialchars($produto['id_produto']) ?>" 
                                        class="excluir" 
@@ -281,7 +324,7 @@ if (isset($_GET['editar'])) {
             <h2>Adicionar Produto</h2>
             <form method="POST" action="TELA_GERENCIAR_PRODUTOS.php">
                 <label for="Tipo_mel">Tipo de Mel:</label>
-                <input type="text" name="Tipo_mel" required>
+                <input type="text" name="Tipo_mel" required onkeypress ="mascara(this, nomeM)">
 
                 <label for="Data_embalado">Data Embalado:</label>
                 <input type="date" name="Data_embalado" required>
@@ -320,7 +363,7 @@ if (isset($_GET['editar'])) {
                 <input type="hidden" name="id_produto" value="<?= $produto_edicao['id_produto'] ?>">
                 
                 <label for="Tipo_mel_editar">Tipo de Mel:</label>
-                <input type="text" name="Tipo_mel" id="Tipo_mel_editar" value="<?= htmlspecialchars($produto_edicao['Tipo_mel']) ?>" required>
+                <input type="text" name="Tipo_mel" id="Tipo_mel_editar" value="<?= htmlspecialchars($produto_edicao['Tipo_mel']) ?>" required onkeypress ="mascara(this, nomeM)">
 
                 <label for="Data_embalado_editar">Data Embalado:</label>
                 <input type="date" name="Data_embalado" id="Data_embalado_editar" value="<?= htmlspecialchars($produto_edicao['Data_embalado']) ?>" required>
@@ -346,6 +389,26 @@ if (isset($_GET['editar'])) {
                 </select>
 
                 <button type="submit" name="alterar_produto" class="btn_acao">Alterar</button>
+                <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalAlterar')">Cancelar</button>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Modal para Repor Produto -->
+    <?php if ($produto_repor): ?>
+    <div id="modalRepor" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <h2>Repor Produto</h2>
+            <form method="POST" action="TELA_GERENCIAR_PRODUTOS.php">
+                <input type="hidden" name="id_produto" value="<?= $produto_repor['id_produto'] ?>">
+
+                <label for="Quantidade_repor">Quantidade:</label>
+                <input type="number" name="Quantidade" id="Quantidade_repor" min="0" required>
+
+
+
+                <button type="submit" name="acresentar_produto" class="btn_acao">Repor</button>
                 <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalAlterar')">Cancelar</button>
             </form>
         </div>
