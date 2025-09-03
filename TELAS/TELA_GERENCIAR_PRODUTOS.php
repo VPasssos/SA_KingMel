@@ -105,17 +105,15 @@ if (isset($_GET['excluir'])) {
         
         if ($stmt->execute()) {
             $pdo->commit();
-            echo "<script>alert('Produto excluído com sucesso!');</script>";
+            echo "<script>alert('Produto excluído com sucesso!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
         } else {
             throw new Exception("Erro ao excluir produto");
         }
         
     } catch (Exception $e) {
         $pdo->rollBack();
-        echo "<script>alert('Erro ao excluir produto!');</script>";
+        echo "<script>alert('Erro ao excluir produto!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_PRODUTOS.php");
     exit();
 }
 
@@ -165,14 +163,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_produto']))
         }
         
         $pdo->commit();
-        echo "<script>alert('Produto adicionado com sucesso!');</script>";
+        echo "<script>alert('Produto adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
         
     } catch (Exception $e) {
         $pdo->rollBack();
-        echo "<script>alert('Erro ao adicionar produto!');</script>";
+        echo "<script>alert('Erro ao adicionar produto!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_PRODUTOS.php");
     exit();
 }
 
@@ -239,13 +235,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_produto'])) {
         }
 
         $pdo->commit();
-        echo "<script>alert('Produto alterado com sucesso!');</script>";
+        echo "<script>alert('Produto alterado com sucesso!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
     } catch (Exception $e) {
         $pdo->rollBack();
-        echo "<script>alert('Erro ao alterar produto!');</script>";
+        echo "<script>alert('Erro ao alterar produto!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
     }
-
-    header("Location: TELA_GERENCIAR_PRODUTOS.php");
     exit();
 }
 
@@ -268,14 +262,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acresentar_produto'])
         $stmt->execute();
         
         $pdo->commit();
-        echo "<script>alert('Produto reposto com sucesso!');</script>";
+        echo "<script>alert('Produto reposto com sucesso!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
         
     } catch (Exception $e) {
         $pdo->rollBack();
-        echo "<script>alert('Erro ao repor produto!');</script>";
+        echo "<script>alert('Erro ao repor produto!'); window.location.href='TELA_GERENCIAR_PRODUTOS.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_PRODUTOS.php");
     exit();
 }
 

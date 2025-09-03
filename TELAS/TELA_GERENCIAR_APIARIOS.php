@@ -37,12 +37,10 @@ if (isset($_GET['excluir'])) {
     $stmt->bindParam(':id_apiario', $id_apiario, PDO::PARAM_INT);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Apiário excluído com sucesso!');</script>";
+        echo "<script>alert('Apiário excluído com sucesso!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
     } else {
-        echo "<script>alert('Erro ao excluir apiário!');</script>";
+        echo "<script>alert('Erro ao excluir apiário!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_APIARIOS.php");
     exit();
 }
 
@@ -64,12 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_apiario']))
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Apiário adicionado com sucesso!');</script>";
+        echo "<script>alert('Apiário adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
     } else {
-        echo "<script>alert('Erro ao adicionar apiário!');</script>";
+        echo "<script>alert('Erro ao adicionar apiário!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_APIARIOS.php");
     exit();
 }
 
@@ -94,12 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_apiario'])) {
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Apiário alterado com sucesso!');</script>";
+        echo "<script>alert('Apiário alterado com sucesso!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
     } else {
-        echo "<script>alert('Erro ao alterar apiário!');</script>";
+        echo "<script>alert('Erro ao alterar apiário!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_APIARIOS.php");
     exit();
 }
 

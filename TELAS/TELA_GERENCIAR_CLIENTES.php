@@ -37,12 +37,10 @@ if (isset($_GET['excluir'])) {
     $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Cliente excluído com sucesso!');</script>";
+        echo "<script>alert('Cliente excluído com sucesso!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
     } else {
-        echo "<script>alert('Erro ao excluir cliente!');</script>";
+        echo "<script>alert('Erro ao excluir cliente!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_CLIENTES.php");
     exit();
 }
 
@@ -66,12 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_cliente']))
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Cliente adicionado com sucesso!');</script>";
+        echo "<script>alert('Cliente adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
     } else {
-        echo "<script>alert('Erro ao adicionar cliente!');</script>";
+        echo "<script>alert('Erro ao adicionar cliente!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_CLIENTES.php");
     exit();
 }
 
@@ -98,12 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_cliente'])) {
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Cliente alterado com sucesso!');</script>";
+        echo "<script>alert('Cliente alterado com sucesso!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
     } else {
-        echo "<script>alert('Erro ao alterar cliente!');</script>";
+        echo "<script>alert('Erro ao alterar cliente!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
     }
-    
-    header("Location: TELA_GERENCIAR_CLIENTES.php");
     exit();
 }
 

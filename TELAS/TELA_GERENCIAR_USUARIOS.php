@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_usuario']))
     $stmt->bindParam(':perfil', $perfil);
     $stmt->execute();
 
-    header("Location: TELA_GERENCIAR_USUARIOS.php"); // Redireciona após a adição
+    echo "<script>alert('Usuario adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_USUARIOS.php';</script>";
     exit();
 }
 
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_usuario'])) {
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->execute();
 
-    header("Location: TELA_GERENCIAR_USUARIOS.php"); // Redireciona após a alteração
+    echo "<script>alert('Usuario alterado com sucesso!'); window.location.href='TELA_GERENCIAR_USUARIOS.php';</script>";
     exit();
 }
 
