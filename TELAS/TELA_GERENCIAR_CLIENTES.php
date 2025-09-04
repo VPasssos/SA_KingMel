@@ -4,7 +4,9 @@ include('../conexao.php'); // Inclui a conexão com o banco de dados
 
 // VERIFICA SE O USUARIO TEM PERMISSÃO
 if($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2){
-    echo "<script>alert('Acesso Negado'); window.location.href='principal.php';</script>";        
+    $_SESSION['mensagem_erro'] = 'Acesso Negado';
+    header('Location: principal.php');
+    exit();        
     exit();
 }
 
@@ -37,9 +39,13 @@ if (isset($_GET['excluir'])) {
     $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Cliente excluído com sucesso!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
+        $_SESSION['mensagem_sucesso'] = 'Cliente excluído com sucesso!';
+    header('Location: TELA_GERENCIAR_CLIENTES.php');
+    exit();
     } else {
-        echo "<script>alert('Erro ao excluir cliente!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
+        $_SESSION['mensagem_erro'] = 'Erro ao excluir cliente!';
+    header('Location: TELA_GERENCIAR_CLIENTES.php');
+    exit();
     }
     exit();
 }
@@ -64,9 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_cliente']))
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Cliente adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
+        $_SESSION['mensagem_sucesso'] = 'Cliente adicionado com sucesso!';
+    header('Location: TELA_GERENCIAR_CLIENTES.php');
+    exit();
     } else {
-        echo "<script>alert('Erro ao adicionar cliente!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
+        $_SESSION['mensagem_erro'] = 'Erro ao adicionar cliente!';
+    header('Location: TELA_GERENCIAR_CLIENTES.php');
+    exit();
     }
     exit();
 }
@@ -94,9 +104,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_cliente'])) {
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Cliente alterado com sucesso!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
+        $_SESSION['mensagem_sucesso'] = 'Cliente alterado com sucesso!';
+    header('Location: TELA_GERENCIAR_CLIENTES.php');
+    exit();
     } else {
-        echo "<script>alert('Erro ao alterar cliente!'); window.location.href='TELA_GERENCIAR_CLIENTES.php';</script>";
+        $_SESSION['mensagem_erro'] = 'Erro ao alterar cliente!';
+    header('Location: TELA_GERENCIAR_CLIENTES.php');
+    exit();
     }
     exit();
 }
@@ -128,11 +142,24 @@ if (isset($_GET['editar'])) {
 
 </head>
 <body>
+
     <?php include("MENU.php"); ?>
 
     <main>
         <h1>GERENCIAR CLIENTES</h1>
         
+        <?php
+        if (isset($_SESSION['mensagem_sucesso'])) {
+            echo '<div class="mensagem sucesso">' . $_SESSION['mensagem_sucesso'] . '</div>';
+            unset($_SESSION['mensagem_sucesso']);
+        }
+        if (isset($_SESSION['mensagem_erro'])) {
+            echo '<div class="mensagem erro">' . $_SESSION['mensagem_erro'] . '</div>';
+            unset($_SESSION['mensagem_erro']);
+        }
+        ?>
+
+
         <div class="ops_cli">
             <button id="btnAdicionar" onclick="abrirModal('modalAdicionar')">Adicionar Cliente</button>
             <form action="TELA_GERENCIAR_CLIENTES.php" method="POST">

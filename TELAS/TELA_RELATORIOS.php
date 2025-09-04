@@ -4,7 +4,9 @@ include('../conexao.php'); // Inclui a conexão com o banco de dados
 
 // VERIFICA SE O USUARIO TEM PERMISSÃO
 if($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2){
-    echo "<script>alert('Acesso Negado'); window.location.href='principal.php';</script>";        
+    $_SESSION['mensagem_erro'] = 'Acesso Negado';
+    header('Location: principal.php');
+    exit();        
     exit();
 }
 
@@ -171,11 +173,23 @@ if (isset($_POST['gerar_csv'])) {
     
 </head>
 <body>
+
     <?php include("MENU.php"); ?>
 
     <main>
         <h1>RELATÓRIOS - KING MEL</h1>
         
+        <?php
+        if (isset($_SESSION['mensagem_sucesso'])) {
+            echo '<div class="mensagem sucesso">' . $_SESSION['mensagem_sucesso'] . '</div>';
+            unset($_SESSION['mensagem_sucesso']);
+        }
+        if (isset($_SESSION['mensagem_erro'])) {
+            echo '<div class="mensagem erro">' . $_SESSION['mensagem_erro'] . '</div>';
+            unset($_SESSION['mensagem_erro']);
+        }
+        ?>
+
         <!-- Filtros -->
         <div class="filtros">
             <h2>Filtrar Relatórios</h2>

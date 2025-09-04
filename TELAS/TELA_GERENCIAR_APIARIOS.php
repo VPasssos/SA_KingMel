@@ -4,7 +4,9 @@ include('../conexao.php'); // Inclui a conexão com o banco de dados
 
 // VERIFICA SE O USUARIO TEM PERMISSÃO
 if($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 3){
-    echo "<script>alert('Acesso Negado'); window.location.href='principal.php';</script>";        
+    $_SESSION['mensagem_erro'] = 'Acesso Negado';
+    header('Location: principal.php');
+    exit();        
     exit();
 }
 
@@ -37,9 +39,13 @@ if (isset($_GET['excluir'])) {
     $stmt->bindParam(':id_apiario', $id_apiario, PDO::PARAM_INT);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Apiário excluído com sucesso!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
+        $_SESSION['mensagem_sucesso'] = 'Apiário excluído com sucesso!';
+    header('Location: TELA_GERENCIAR_APIARIOS.php');
+    exit();
     } else {
-        echo "<script>alert('Erro ao excluir apiário!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
+        $_SESSION['mensagem_erro'] = 'Erro ao excluir apiário!';
+    header('Location: TELA_GERENCIAR_APIARIOS.php');
+    exit();
     }
     exit();
 }
@@ -62,9 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_apiario']))
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Apiário adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
+        $_SESSION['mensagem_sucesso'] = 'Apiário adicionado com sucesso!';
+    header('Location: TELA_GERENCIAR_APIARIOS.php');
+    exit();
     } else {
-        echo "<script>alert('Erro ao adicionar apiário!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
+        $_SESSION['mensagem_erro'] = 'Erro ao adicionar apiário!';
+    header('Location: TELA_GERENCIAR_APIARIOS.php');
+    exit();
     }
     exit();
 }
@@ -90,9 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_apiario'])) {
     $stmt->bindParam(':Endereco', $Endereco);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Apiário alterado com sucesso!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
+        $_SESSION['mensagem_sucesso'] = 'Apiário alterado com sucesso!';
+    header('Location: TELA_GERENCIAR_APIARIOS.php');
+    exit();
     } else {
-        echo "<script>alert('Erro ao alterar apiário!'); window.location.href='TELA_GERENCIAR_APIARIOS.php';</script>";
+        $_SESSION['mensagem_erro'] = 'Erro ao alterar apiário!';
+    header('Location: TELA_GERENCIAR_APIARIOS.php');
+    exit();
     }
     exit();
 }
@@ -129,6 +143,17 @@ if (isset($_GET['editar'])) {
     <main>
         <h1>GERENCIAR APIÁRIOS</h1>
         
+        <?php
+        if (isset($_SESSION['mensagem_sucesso'])) {
+            echo '<div class="mensagem sucesso">' . $_SESSION['mensagem_sucesso'] . '</div>';
+            unset($_SESSION['mensagem_sucesso']);
+        }
+        if (isset($_SESSION['mensagem_erro'])) {
+            echo '<div class="mensagem erro">' . $_SESSION['mensagem_erro'] . '</div>';
+            unset($_SESSION['mensagem_erro']);
+        }
+        ?>
+
         <div class="ops_api">
             <button id="btnAdicionar" onclick="abrirModal('modalAdicionar')">Adicionar</button>
             <form action="TELA_GERENCIAR_APIARIOS.php" method="POST">
