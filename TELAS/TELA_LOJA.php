@@ -82,9 +82,9 @@ if (isset($_GET['carrinho'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_ao_carrinho'])) {
     $id_produto = $_POST['id_produto'];
     $qtd_produto = $_POST['quantidade'];
-    $usuario = $_SESSION['usuario']; // supondo que aqui está o nome do usuário (string)
+    $usuario = $_SESSION['usuario']; 
 
-    // Buscar id_usuario do usuario no banco (evita adulteração)
+    // Buscar id_usuario
     $stmt = $pdo->prepare("SELECT id_usuario FROM usuario WHERE nome = :nome");
     $stmt->bindParam(':nome', $usuario, PDO::PARAM_STR);
     $stmt->execute();
@@ -96,28 +96,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_ao_carrinho
     }
     $id_usuario = $usuario_dados['id_usuario'];
 
-    // Buscar preço do produto no banco (evita adulteração)
+    // Buscar preço
     $stmt = $pdo->prepare("SELECT Preco FROM produto WHERE id_produto = :id_produto");
     $stmt->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
     $stmt->execute();
-    $produto = $stmt->fetch(PDO::FETCH_ASSOC);
+    $produtoDados = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Buscar apiário vinculado ao produto
+    if (!$produtoDados) {
+        echo "<script>alert('Produto inválido.'); window.location.href='TELA_LOJA.php';</script>";
+        exit();
+    }
+
+    $preco_unitario = $produtoDados['Preco'];
+    $preco_total = $preco_unitario * $qtd_produto;
+
+    // Buscar apiário
     $stmtApiario = $pdo->prepare("SELECT id_apiario FROM apiario_produto WHERE id_produto = :id_produto LIMIT 1");
     $stmtApiario->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
     $stmtApiario->execute();
     $apiario = $stmtApiario->fetch(PDO::FETCH_ASSOC);
 
-    if ($produto && $apiario) {
-        $preco_unitario = $produto['Preco'];
+    if ($apiario && $preco_total) {
         $id_apiario = $apiario['id_apiario'];
 
+        // Inserir no carrinho
         $sql = "INSERT INTO carrinho (id_produto, qtd_produto, preco_unitario, id_apiario, id_usuario) 
                 VALUES (:id_produto, :qtd_produto, :preco_unitario, :id_apiario, :id_usuario)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':id_produto', $id_produto);
         $stmt->bindParam(':qtd_produto', $qtd_produto);
-        $stmt->bindParam(':preco_unitario', $preco_unitario);
+        $stmt->bindParam(':preco_unitario', $preco_total);
         $stmt->bindParam(':id_apiario', $id_apiario);
         $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->execute();
@@ -125,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_ao_carrinho
         echo "<script>alert('Produto adicionado ao carrinho com sucesso!'); window.location.href='TELA_LOJA.php';</script>";
         exit();
     } else {
-        echo "<script>alert('Erro ao adicionar o produto ao carrinho.'); window.location.href='TELA_LOJA.php';</script>";
+        echo "<script>alert('Erro: produto sem apiário vinculado.'); window.location.href='TELA_LOJA.php';</script>";
         exit();
     }
 }
@@ -270,21 +278,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_ao_carrinho
     </div>
 <?php endif; ?>
 
-<?php if ($produto_carrinho): ?>
-    <div id="modalcarrinho" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>Adicionar ao Carrinho</h2>
-            <form method="POST" action="TELA_LOJA.php">
-                
+<!-- Modal de visualização do carrinho -->
+<div id="modalCarrinhoLista" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>Meu Carrinho</h2>
 
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>Tipo de Mel</th>
+                    <th>Apiário</th>
+                    <th>Peso (kg)</th>
+                    <th>Quantidade</th>
+                    <th>Preço Unitário (R$)</th>
+                    <th>Total (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($itensCarrinho)): ?>
+                    <?php 
+                    $totalGeral = 0;
+                    foreach ($itensCarrinho as $item): 
+                        $subtotal = $item['qtd_produto'] * $item['preco_unitario'];
+                        $totalGeral += $subtotal;
+                    ?>
+                        <tr>
+                            <td><?= htmlspecialchars($item['Tipo_mel']) ?></td>
+                            <td><?= htmlspecialchars($item['Nome_apiario'] ?? 'Não vinculado') ?></td>
+                            <td><?= htmlspecialchars($item['Peso']) ?></td>
+                            <td><?= htmlspecialchars($item['qtd_produto']) ?></td>
+                            <td><?= number_format($item['preco_unitario'], 2, ',', '.') ?></td>
+                            <td><?= number_format($subtotal, 2, ',', '.') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6">Seu carrinho está vazio.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5">Total Geral</th>
+                    <th><?= isset($totalGeral) ? number_format($totalGeral, 2, ',', '.') : '0,00' ?></th>
+                </tr>
+            </tfoot>
+        </table>
 
-                <br><br>
-                <button type="submit" name="adicionar_ao_carrinho" class="btn_acao">Confirmar</button>
-                <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalCarrinho')">Cancelar</button>
-            </form>
-        </div>
+        <br>
+        <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalCarrinhoLista')">Fechar</button>
     </div>
-<?php endif; ?>
+</div>
+
+<script>
+// Funções de abrir/fechar modal
+function abrirModal(id) {
+    document.getElementById(id).style.display = 'flex';
+}
+function fecharModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+</script>
+
 
 
 <script>
