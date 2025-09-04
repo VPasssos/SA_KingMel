@@ -69,8 +69,7 @@ h1 {
 }
 
 .btn-filtrar {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--hover-color);
     border: none;
     cursor: pointer;
     font-weight: 500;
@@ -78,12 +77,13 @@ h1 {
 }
 
 .btn-filtrar:hover {
-    background-color: var(--hover-color);
+
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .btn-csv {
-    background-color: #27ae60;
-    color: white;
+    background-color: #219a52;
     border: none;
     cursor: pointer;
     font-weight: 500;
@@ -91,7 +91,9 @@ h1 {
 }
 
 .btn-csv:hover {
-    background-color: #219a52;
+
+    background-color: #27ae60;
+    color: white;
 }
 
 .dashboard {
