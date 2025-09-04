@@ -454,7 +454,7 @@ if (isset($_GET['repor'])) {
                 <input type="number" name="Preco" id="Preco_editar" step="0.01" min="0" value="<?= $produto_edicao['Preco'] ?>" required>
 
                 <label for="foto_alterar">Foto atual:</label>
-                <img src="data:<?= htmlspecialchars($produto_edicao['tipo_foto']); ?>;base64,<?= $imagemBase64 ?>" alt="Foto do produto" width="150" height="auto" />
+                <img src="data:<?= htmlspecialchars($produto_edicao['tipo_foto']); ?>;base64,<?= $imagemBase64 ?>" alt="Foto do produto" width="40" height="auto" />
 
                 <label for="nova_foto">Nova imagem (opcional):</label>
                 <input type="file" name="foto">
