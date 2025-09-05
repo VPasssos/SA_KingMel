@@ -8,6 +8,22 @@ if ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 3) {
     exit();
 }
 
+//Função busca produto pelo nome
+function buscarProduto($pdo, $busca) {
+    $sql = "SELECT p.*, a.Nome_apiario
+            FROM produto p
+            LEFT JOIN apiario a ON a.id_apiario = p.id_apiario
+            WHERE p.Tipo_mel LIKE :busca
+            ORDER BY p.Tipo_mel ASC";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':busca', '%' . $busca . '%', PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
 // Função para buscar produtos com informações do apiário
 function buscarProdutos($pdo, $termo = null) {
     $sql = "SELECT p.*, a.Nome_apiario, a.id_apiario 
@@ -68,7 +84,7 @@ function listarcarrinho($pdo) {
 }
 
 // Buscar produtos, apiários e carrinho
-$produtos = isset($_POST['busca']) ? buscarProdutos($pdo, $_POST['busca']) : buscarProdutos($pdo);
+$produtos = isset($_POST['busca']) ? buscarProduto($pdo, $_POST['busca']) : buscarProdutos($pdo);
 $apiarios = buscarApiarios($pdo);
 $itensCarrinho = listarcarrinho($pdo);
 
@@ -229,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="ops_prod">
         <button id="btncarrinho" onclick="abrirModal('modalCarrinhoLista')">Carrinho</button>
         <form action="LOJA.php" method="POST">
-            <input type="text" name="busca" placeholder="Pesquisar produto ou apiário" value="<?= htmlspecialchars($_POST['busca'] ?? '') ?>">
+            <input type="text" name="busca" placeholder="Pesquisar produto" value="<?= htmlspecialchars($_POST['busca'] ?? '') ?>">
             <button type="submit">Pesquisar</button>
         </form>
     </div>
