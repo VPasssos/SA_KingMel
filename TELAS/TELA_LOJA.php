@@ -8,19 +8,42 @@ if ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 3) {
     exit();
 }
 
+$busca = $_POST["busca"] ?? '';
+$filtro = $_POST["filtro"] ?? '';
+
+$orderBy = "p.Tipo_mel ASC";
+
+switch ($filtro) {
+    case 'preco_desc':
+        $orderBy = "p.Preco DESC";
+        break;
+    case 'preco_asc':
+        $orderBy = "p.Preco ASC";
+        break;
+    case 'peso_desc':
+        $orderBy = "p.Peso DESC";
+        break;
+    case 'peso_asc':
+        $orderBy = "p.Peso ASC";
+        break;
+}
+
 //Função busca produto pelo nome
-function buscarProduto($pdo, $busca) {
-    $sql = "SELECT p.*, a.Nome_apiario
-            FROM produto p
-            LEFT JOIN apiario a ON a.id_apiario = p.id_apiario
+function buscarProduto($pdo, $busca, $orderBy) {
+    $sql = "SELECT p.id_produto, p.Tipo_mel, p.Data_embalado, p.Peso, p.Preco, p.Quantidade,p.tipo_foto,p.foto, a.Nome_apiario
+            FROM produto AS p
+            LEFT JOIN apiario_produto AS ap ON ap.id_produto = p.id_produto
+            LEFT JOIN apiario AS a ON a.id_apiario = ap.id_apiario
             WHERE p.Tipo_mel LIKE :busca
-            ORDER BY p.Tipo_mel ASC";
-    
+            GROUP BY p.Tipo_mel
+            ORDER BY $orderBy";
+
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':busca', '%' . $busca . '%', PDO::PARAM_STR);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 
 
@@ -84,7 +107,7 @@ function listarcarrinho($pdo) {
 }
 
 // Buscar produtos, apiários e carrinho
-$produtos = isset($_POST['busca']) ? buscarProduto($pdo, $_POST['busca']) : buscarProdutos($pdo);
+$produtos = buscarProduto($pdo, $busca, $orderBy);
 $apiarios = buscarApiarios($pdo);
 $itensCarrinho = listarcarrinho($pdo);
 
@@ -219,6 +242,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
+
+// Função para excluir um produto do carrinho
+if (isset($_GET['excluir'])) {
+    $id_produto = $_GET['excluir'];
+
+    try {
+        $pdo->beginTransaction();
+        
+        // Depois excluir o produto
+        $sql = "DELETE FROM carrinho WHERE id_produto = :id_produto";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            $pdo->commit();
+            echo "<script>alert('Produto excluído com sucesso!'); window.location.href='TELA_LOJA.php';</script>";
+        } else {
+            throw new Exception("Erro ao excluir produto");
+        }
+        
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo "<script>alert('Erro ao excluir produto!'); window.location.href='abrirModal('modalCarrinhoLista')';</script>";
+    }
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -229,6 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_IMAGENS.css">
+    <link rel="stylesheet" href="../ESTILOS/ESTILO_LOJA.css">
     <script src="../JS/mascaras.js"></script>
     <style>
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
@@ -244,8 +294,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="ops_prod">
         <button id="btncarrinho" onclick="abrirModal('modalCarrinhoLista')">Carrinho</button>
-        <form action="LOJA.php" method="POST">
+        <form action="TELA_LOJA.php" method="POST">
             <input type="text" name="busca" placeholder="Pesquisar produto" value="<?= htmlspecialchars($_POST['busca'] ?? '') ?>">
+            <select name="filtro">
+                <option value="">Ordenar por</option>
+                <option value="preco_desc" <?= (($_POST['filtro'] ?? '') == 'preco_desc') ? 'selected' : '' ?>>Maior preço</option>
+                <option value="preco_asc" <?= (($_POST['filtro'] ?? '') == 'preco_asc') ? 'selected' : '' ?>>Menor preço</option>
+                <option value="peso_desc" <?= (($_POST['filtro'] ?? '') == 'peso_desc') ? 'selected' : '' ?>>Peso maior</option>
+                <option value="peso_asc" <?= (($_POST['filtro'] ?? '') == 'peso_asc') ? 'selected' : '' ?>>Peso menor</option>
+            </select>
             <button type="submit">Pesquisar</button>
         </form>
     </div>
@@ -321,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <thead>
                     <tr>
                         <th>Tipo de Mel</th><th>Apiário</th><th>Quantidade</th>
-                        <th>Preço Total (R$)</th>
+                        <th>Preço Total (R$)</th><th>Imagem</th><th>Excluir do carrinho</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -335,6 +392,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td><?= htmlspecialchars($item['Nome_apiario']) ?></td>
                             <td><?= $item['qtd_produto'] ?></td>
                             <td><?= number_format($item['preco_unitario'],2,',','.') ?></td>
+                            <td> 
+                                <?php if ($produto['foto']): ?>
+                                    <img src="data:<?= $produto['tipo_foto'] ?>;base64,<?= base64_encode($produto['foto']) ?>" width="15">
+                                <?php else: ?>Sem imagem<?php endif; ?>
+                            </td>
+                            <td><a href="TELA_LOJA.php?excluir=<?= htmlspecialchars($item['id_produto']) ?>" 
+                                       class="excluir" 
+                                       onclick="return confirm('Tem certeza que deseja excluir este produto do carrinho?')">Excluir</a></td>
                         </tr>
                     <?php endforeach; else: ?>
                         <tr><td colspan="4">Carrinho vazio.</td></tr>
