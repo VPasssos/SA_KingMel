@@ -272,9 +272,11 @@ if (isset($_GET['excluir'])) {
 // Função para visualizar compras
 function VisualizarCompras($pdo) {
     $id_usuario = getIdUsuario($pdo);
-    $sql = "SELECT c.id_compra_carrinho, u.id_usuario, c.data_compra, c.preco_total, c.status
+    $sql = "SELECT c.id_compra_carrinho, u.id_usuario, c.data_compra, c.preco_total, c.status, p.Tipo_mel 
             FROM compra_carrinho AS c
             INNER JOIN usuario AS u ON u.id_usuario = c.id_usuario
+            INNER JOIN compra_carrinho_produto as ccp ON ccp.id_compra_carrinho = c.id_compra_carrinho
+            INNER JOIN produto as p ON ccp.id_produto = p.id_produto
             WHERE c.id_usuario = :id_usuario";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
@@ -444,6 +446,7 @@ $compras = VisualizarCompras($pdo);
           <th>ID Compra</th>
           <th>Data da Compra</th>
           <th>Total (R$)</th>
+          <th>Produto</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -454,6 +457,7 @@ $compras = VisualizarCompras($pdo);
         <td><?= htmlspecialchars($compra['id_compra_carrinho']) ?></td>
         <td><?= htmlspecialchars($compra['data_compra']) ?></td>
         <td><?= htmlspecialchars($compra['preco_total']) ?></td>
+        <td><?= htmlspecialchars($compra['Tipo_mel']) ?></td>
         <td><?= htmlspecialchars($compra['status']) ?></td>
         </tr>
         <?php endforeach; ?>
