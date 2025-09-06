@@ -268,6 +268,23 @@ if (isset($_GET['excluir'])) {
     }
     exit();
 }
+
+// Função para visualizar compras
+function VisualizarCompras($pdo) {
+    $id_usuario = getIdUsuario($pdo);
+    $sql = "SELECT c.id_compra_carrinho, u.id_usuario, c.data_compra, c.preco_total, c.status
+            FROM compra_carrinho AS c
+            INNER JOIN usuario AS u ON u.id_usuario = c.id_usuario
+            WHERE c.id_usuario = :id_usuario";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+$compras = VisualizarCompras($pdo);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -294,6 +311,7 @@ if (isset($_GET['excluir'])) {
 
     <div class="ops_prod">
         <button id="btncarrinho" onclick="abrirModal('modalCarrinhoLista')">Carrinho</button>
+        <button id="btncarrinho" onclick="abrirModal('modalVisualizarCompras')">Visualizar compras</button>
         <form action="TELA_LOJA.php" method="POST">
             <input type="text" name="busca" placeholder="Pesquisar produto" value="<?= htmlspecialchars($_POST['busca'] ?? '') ?>">
             <select name="filtro">
@@ -415,6 +433,37 @@ if (isset($_GET['excluir'])) {
         </form>
     </div>
 </div>
+
+<!-- Modal Visualizar Compras -->
+<div id="modalVisualizarCompras" class="modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+  <div class="modal-content" style="background: #fff; padding: 20px; border-radius: 10px; width: 600px; max-height: 80vh; overflow-y: auto;">
+    <h2>Minhas Compras</h2>
+    <table border="1" width="100%" style="border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr>
+          <th>ID Compra</th>
+          <th>Data da Compra</th>
+          <th>Total (R$)</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aqui você insere as linhas das compras via backend -->
+        <?php foreach($compras as $compra): ?>
+        <tr>
+        <td><?= htmlspecialchars($compra['id_compra_carrinho']) ?></td>
+        <td><?= htmlspecialchars($compra['data_compra']) ?></td>
+        <td><?= htmlspecialchars($compra['preco_total']) ?></td>
+        <td><?= htmlspecialchars($compra['status']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    <br>
+    <button type="button" onclick="fecharModal('modalVisualizarCompras')" style="padding: 8px 16px; cursor: pointer;">Fechar</button>
+  </div>
+</div>
+
 
 <script>
 function abrirModal(id){document.getElementById(id).style.display='flex';}
