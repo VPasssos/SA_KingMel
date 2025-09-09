@@ -262,37 +262,27 @@ $compras = VisualizarCompras($pdo);
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>LOJA</title>
+    <title>🐝 King Mel – Loja</title>
 
-    <!-- Seus estilos globais e paleta -->
+    <!-- Google Fonts para título mais bonito -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+    <!-- Estilos externos existentes -->
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_IMAGENS.css">
-    <!-- Novo estilo da loja (cards, cabeçalho de busca, tabelas modais) -->
     <link rel="stylesheet" href="../ESTILOS/ESTILO_LOJA2.css">
 
     <script src="../JS/mascaras.js"></script>
-
-    <style>
-        /* Fallbacks mínimos caso variáveis não estejam definidas em ESTILO_GERAL.css */
-        :root {
-            --background: var(--background, #f5f5f5);
-            --text-color: var(--text-color, #333);
-            --font-family: var(--font-family, Arial, Helvetica, sans-serif);
-            --primary-color: var(--primary-color, #e0a500);
-            --hover-color: var(--hover-color, #c98f00);
-            --comeia: var(--comeia, #333366);
-            --input-bg: var(--input-bg, #fafafa);
-            --shadow-color: var(--shadow-color, rgba(0,0,0,0.08));
-        }
-    </style>
 </head>
 <body onload="verificaModalCarrinho()">
 
 <?php include("MENU.php"); ?>
 
 <main>
-    <h1 style="margin-bottom:10px;">Loja</h1>
+    <h1 class="loja-titulo">
+        🐝 King Mel – Sua Loja de Mel Premium
+    </h1>
 
     <!-- Barra de ações/Busca/Filtro -->
     <div class="ops_prod loja-actions">
@@ -314,7 +304,7 @@ $compras = VisualizarCompras($pdo);
         </form>
     </div>
 
-    <!-- LISTA DE PRODUTOS EM CARDS (estilo loja) -->
+    <!-- LISTA DE PRODUTOS EM CARDS -->
     <?php if (!empty($produtos)): ?>
         <div class="produtos-grid">
             <?php foreach ($produtos as $produto): ?>
@@ -359,8 +349,7 @@ $compras = VisualizarCompras($pdo);
     <?php endif; ?>
 </main>
 
-
-<!-- ========= MODAL: ADICIONAR AO CARRINHO ========= -->
+<!-- MODAIS: ADICIONAR AO CARRINHO, VISUALIZAR CARRINHO E COMPRAS -->
 <?php if ($produto_carrinho): ?>
 <div id="modalCarrinho" class="modal">
   <div class="modal-content modal-md">
@@ -381,15 +370,12 @@ $compras = VisualizarCompras($pdo);
 
       <?php if ((int)$produto_carrinho['Quantidade'] > 0): ?>
         <div class="estoque">Em estoque (<?= (int)$produto_carrinho['Quantidade'] ?> disponíveis)</div>
-      <?php else: ?>
-        <div class="estoque esgotado">Produto indisponível</div>
-      <?php endif; ?>
-
-      <?php if ((int)$produto_carrinho['Quantidade'] > 0): ?>
         <div class="qtd-box">
           <label for="qtd">Quantidade:</label>
           <input type="number" id="qtd" name="quantidade" min="1" max="<?= (int)$produto_carrinho['Quantidade'] ?>" required>
         </div>
+      <?php else: ?>
+        <div class="estoque esgotado">Produto indisponível</div>
       <?php endif; ?>
 
       <div class="modal-actions">
@@ -403,16 +389,12 @@ $compras = VisualizarCompras($pdo);
 </div>
 <?php endif; ?>
 
-
-
-<!-- ========= MODAL: VISUALIZAR CARRINHO ========= -->
 <div id="modalCarrinhoLista" class="modal">
   <div class="modal-content modal-lg">
     <h2>Meu Carrinho</h2>
-
     <form method="POST" action="TELA_LOJA.php">
       <div class="listagem-cards">
-        <?php if (!empty($itensCarrinho)): 
+        <?php if (!empty($itensCarrinho)):
           $totalGeral = 0.0;
           foreach($itensCarrinho as $item):
             $totalGeral += (float)$item['preco_unitario'];
@@ -423,28 +405,23 @@ $compras = VisualizarCompras($pdo);
             <?php else: ?>
               <img src="../IMAGENS/sem-foto.png" alt="Sem imagem">
             <?php endif; ?>
-
             <div class="card-content">
               <div class="card-title"><?= htmlspecialchars($item['Tipo_mel']) ?></div>
               <div class="card-meta"><?= htmlspecialchars($item['Nome_apiario']) ?> • Qtd: <?= (int)$item['qtd_produto'] ?></div>
               <div class="card-preco">R$ <?= number_format((float)$item['preco_unitario'], 2, ',', '.') ?></div>
             </div>
-
             <div class="card-actions">
-              <a href="TELA_LOJA.php?excluir=<?= (int)$item['id_produto'] ?>" 
-                 onclick="return confirm('Excluir este produto do carrinho?')">Remover</a>
+              <a href="TELA_LOJA.php?excluir=<?= (int)$item['id_produto'] ?>" onclick="return confirm('Excluir este produto do carrinho?')">Remover</a>
             </div>
           </div>
         <?php endforeach; else: ?>
           <p>Carrinho vazio.</p>
         <?php endif; ?>
       </div>
-
       <div class="total-resumo">
         <span>Total:</span>
         <span>R$ <?= number_format($totalGeral ?? 0, 2, ',', '.') ?></span>
       </div>
-
       <div class="modal-actions">
         <button type="submit" name="comprar_carrinho" class="btn_acao">Finalizar Compra</button>
         <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalCarrinhoLista')">Fechar</button>
@@ -453,29 +430,22 @@ $compras = VisualizarCompras($pdo);
   </div>
 </div>
 
-
-
-
-<!-- ========= MODAL: VISUALIZAR COMPRAS ========= -->
 <div id="modalVisualizarCompras" class="modal">
   <div class="modal-content modal-lg">
     <h2>Minhas Compras</h2>
-
     <div class="listagem-cards">
       <?php if (!empty($compras)): foreach($compras as $compra): ?>
         <div class="card-item">
-
           <div class="card-content">
             <div class="card-title">Compra #<?= (int)$compra['id_compra_carrinho'] ?></div>
             <div class="card-meta"><?= htmlspecialchars($compra['data_compra']) ?> • Produto: <?= htmlspecialchars($compra['Tipo_mel']) ?></div>
             <div class="card-preco">R$ <?= number_format((float)$compra['preco_total'], 2, ',', '.') ?></div>
-            <div class="foto-produto">            
+            <div class="foto-produto">
                 <?php if ($compra): ?>
                     <img src="data:<?=$compra['tipo_foto']?>;base64,<?=base64_encode($compra['foto'])?>" alt="Foto do produto" width="50" height="auto">
                 <?php endif; ?>
             </div>
           </div>
-
           <div class="card-actions">
             <span style="color:<?= ($compra['status']=='Concluída'?'green':'#c0392b') ?>; font-weight:700;">
               <?= htmlspecialchars($compra['status']) ?>
@@ -486,15 +456,11 @@ $compras = VisualizarCompras($pdo);
         <p>Você ainda não fez nenhuma compra.</p>
       <?php endif; ?>
     </div>
-
     <div class="modal-actions">
       <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalVisualizarCompras')">Fechar</button>
     </div>
   </div>
 </div>
-
-
-
 
 <script>
 function abrirModal(id){ var el=document.getElementById(id); if(el) el.style.display='flex'; }
