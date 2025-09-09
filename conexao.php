@@ -2,7 +2,7 @@
 // CONFIG.php - conexão com banco ForneInjet usando PDO e utf8mb4
 
 $host = "localhost";       // servidor do banco
-$dbname = "forneinjet";    // nome do banco
+$dbname = "sa_kingmel";    // nome do banco
 $user = "root";            // usuário do banco
 $pass = "";                // senha do banco
 
