@@ -25,7 +25,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             exit();
         } else{
             // REDIRECIONA PARA A PÁGINA PRINCIPAL
-            header("Location: TELAS/TELA_INICIAL.php");
+            header("Location: TELAS/TELA_LOJA.php");
             exit();
         }
     } else {
