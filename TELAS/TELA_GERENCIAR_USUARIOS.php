@@ -4,7 +4,9 @@ include('../conexao.php'); // Inclui a conexão com o banco de dados
 
 // VERIFICA SE O USUARIO TEM PERMISSÃO
 if($_SESSION['perfil'] != 1){
-    echo "<script>alert('Acesso Negado'); window.location.href='principal.php';</script>";        
+    $_SESSION['mensagem_erro'] = 'Acesso Negado';
+    header('Location: principal.php');
+    exit();        
     exit();
 }
 
@@ -56,7 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_usuario']))
     $stmt->bindParam(':perfil', $perfil);
     $stmt->execute();
 
-    echo "<script>alert('Usuario adicionado com sucesso!'); window.location.href='TELA_GERENCIAR_USUARIOS.php';</script>";
+    $_SESSION['mensagem_sucesso'] = 'Usuario adicionado com sucesso!';
+    header('Location: TELA_GERENCIAR_USUARIOS.php');
+    exit();
     exit();
 }
 
@@ -83,7 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_usuario'])) {
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->execute();
 
-    echo "<script>alert('Usuario alterado com sucesso!'); window.location.href='TELA_GERENCIAR_USUARIOS.php';</script>";
+    $_SESSION['mensagem_sucesso'] = 'Usuario alterado com sucesso!';
+    header('Location: TELA_GERENCIAR_USUARIOS.php');
+    exit();
     exit();
 }
 
@@ -119,11 +125,23 @@ if (isset($_GET['editar'])) {
     
 </head>
 <body>
+
     <?php include("MENU.php"); ?>
 
     <main>
         <h1>GERENCIAR USUÁRIOS</h1>
         
+        <?php
+        if (isset($_SESSION['mensagem_sucesso'])) {
+            echo '<div class="mensagem sucesso">' . $_SESSION['mensagem_sucesso'] . '</div>';
+            unset($_SESSION['mensagem_sucesso']);
+        }
+        if (isset($_SESSION['mensagem_erro'])) {
+            echo '<div class="mensagem erro">' . $_SESSION['mensagem_erro'] . '</div>';
+            unset($_SESSION['mensagem_erro']);
+        }
+        ?>
+
         <div class="ops_usu">
             <button id="btnAdicionar" onclick="abrirModal('modalAdicionar')">Adicionar</button>
             <form action="TELA_GERENCIAR_USUARIOS.php" method="POST">
