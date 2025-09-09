@@ -82,11 +82,11 @@ $nome_perfil = isset($_SESSION['perfil']) ? $nomes_perfis[$_SESSION['perfil']] :
 <nav id="dock"> 
     <div id="dock_content">
         <ul id="dock_items">
-            <!-- Tela Inicial - Disponível para todos os perfis logados -->
-            <li class="dock-item <?= ($currentPage == 'TELA_INICIAL.php') ? 'active' : '' ?>">
-                <a href="TELA_INICIAL.php">
+            <!-- Loja - Admin e Cliente -->
+            <li class="dock-item <?= temAcesso('TELA_LOJA.php') ? '' : 'disabled' ?> <?= ($currentPage == 'TELA_LOJA.php') ? 'active' : '' ?>">
+                <a href="<?= temAcesso('TELA_LOJA.php') ? 'TELA_LOJA.php' : '#' ?>">
                     <i class="fa-solid fa-house"></i>
-                    <span class="tooltip">Início</span>
+                    <span class="tooltip"><?= temAcesso('TELA_LOJA.php') ? 'Loja' : 'Acesso negado' ?></span>
                 </a>
             </li>
 
@@ -129,6 +129,9 @@ $nome_perfil = isset($_SESSION['perfil']) ? $nomes_perfis[$_SESSION['perfil']] :
                     <span class="tooltip"><?= temAcesso('TELA_RELATORIOS.php') ? 'Relatórios' : 'Acesso negado' ?></span>
                 </a>
             </li>
+<<<<<<< HEAD
+            
+=======
 
             <!-- Loja - Admin e Cliente -->
             <li class="dock-item <?= temAcesso('TELA_LOJA.php') ? '' : 'disabled' ?> <?= ($currentPage == 'TELA_LOJA.php') ? 'active' : '' ?>">
@@ -139,6 +142,7 @@ $nome_perfil = isset($_SESSION['perfil']) ? $nomes_perfis[$_SESSION['perfil']] :
             </li>
 
 
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
             <!-- Logout - Disponível para todos os perfis logados -->
             <li class="dock-item <?= ($currentPage == '../logout.php') ? 'active' : '' ?>">
                 <a href="../logout.php">

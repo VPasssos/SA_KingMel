@@ -21,7 +21,10 @@ switch ($filtro) {
 
 // ======= BUSCAS =======
 function buscarProduto($pdo, $busca, $orderBy) {
+<<<<<<< HEAD
+=======
     // Mantendo sua lógica e campos usados na listagem + imagem
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
     $sql = "SELECT 
                 p.id_produto, p.Tipo_mel, p.Data_embalado, p.Peso, p.Preco, p.Quantidade, 
                 p.tipo_foto, p.foto, a.Nome_apiario
@@ -74,7 +77,10 @@ function getIdUsuario($pdo) {
     return (int)$usuario_dados['id_usuario'];
 }
 
+<<<<<<< HEAD
+=======
 // Corrigido: trazendo imagem do produto para o modal do carrinho
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
 function listarcarrinho($pdo) {
     $id_usuario = getIdUsuario($pdo);
     $sql = "SELECT 
@@ -162,7 +168,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                VALUES (:id_produto, :qtd_produto, :preco_unitario, :id_apiario, :id_usuario)");
         $stmt->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
         $stmt->bindParam(':qtd_produto', $qtd_produto, PDO::PARAM_INT);
+<<<<<<< HEAD
+=======
         // Observação: sua coluna chama 'preco_unitario', mas armazena o TOTAL do item (mantido)
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
         $stmt->bindParam(':preco_unitario', $preco_total_item);
         $stmt->bindParam(':id_apiario', $id_apiario, PDO::PARAM_INT);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
@@ -253,16 +262,25 @@ function VisualizarCompras($pdo) {
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+<<<<<<< HEAD
+}
+
+=======
 
 
 }
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
 $compras = VisualizarCompras($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
+    <title>King Mel – Loja</title>
+=======
     <title>🐝 King Mel – Loja</title>
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
 
     <!-- Google Fonts para título mais bonito -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -271,14 +289,442 @@ $compras = VisualizarCompras($pdo);
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_IMAGENS.css">
+<<<<<<< HEAD
+    <style>
+        /* Estilos específicos para a loja no padrão de gerenciamento */
+        .loja-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .loja-titulo {
+            color: var(--comeia);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            padding-bottom: 15px;
+        }
+        
+        .loja-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+        
+        .loja-actions button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .loja-actions button:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-filter input,
+        .search-filter select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: var(--input-bg);
+        }
+        
+        .search-filter input:focus,
+        .search-filter select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(224, 165, 0, 0.2);
+        }
+        
+        .search-filter button {
+            padding: 12px 20px;
+        }
+        
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .produto-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .produto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .produto-img {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .produto-img img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .img-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f2f2f2;
+            color: #888;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        
+        .produto-info {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .produto-titulo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cinza-escuro);
+            margin-bottom: 10px;
+        }
+        
+        .produto-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .produto-meta span {
+            background: #f3f3f3;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .preco {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-color);
+            margin: 10px 0;
+        }
+        
+        .produto-estoque {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge-estoque {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .em-estoque {
+            background-color: #28a745;
+        }
+        
+        .sem-estoque {
+            background-color: #dc3545;
+        }
+        
+        .qtd {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .produto-acoes {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-add {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-add:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .btn-add[disabled] {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        /* Modal de carrinho no padrão de gerenciamento */
+        .modal-carrinho-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .listagem-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .card-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            padding: 12px;
+        }
+        
+        .card-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid #eee;
+        }
+        
+        .card-content {
+            flex: 1;
+        }
+        
+        .card-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #222;
+        }
+        
+        .card-meta {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .card-preco {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-top: 4px;
+        }
+        
+        .card-actions a {
+            color: #e74c3c;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .card-actions a:hover {
+            color: #c0392b;
+            text-decoration: underline;
+        }
+        
+        .total-resumo {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #222;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* Modal de adicionar produto */
+        .modal-produto {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .modal-produto img {
+            max-width: 180px;
+            max-height: 180px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            background: #fff;
+            padding: 6px;
+        }
+        
+        .modal-produto .produto-nome {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #222;
+        }
+        
+        .modal-produto .produto-apiario {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .modal-produto .produto-preco {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+        
+        .modal-produto .produto-peso {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 12px;
+        }
+        
+        .modal-produto .estoque {
+            font-size: 13px;
+            margin-bottom: 14px;
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .modal-produto .estoque.esgotado {
+            color: #c0392b;
+        }
+        
+        .modal-produto .qtd-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .modal-produto .qtd-box input {
+            width: 80px;
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .loja-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-filter {
+                width: 100%;
+            }
+            
+            .search-filter input,
+            .search-filter select {
+                width: 100%;
+            }
+            
+            .produtos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .modal-carrinho-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .card-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .card-actions {
+                align-items: center;
+            }
+        }
+    </style>
+=======
     <link rel="stylesheet" href="../ESTILOS/ESTILO_LOJA2.css">
 
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
     <script src="../JS/mascaras.js"></script>
 </head>
 <body onload="verificaModalCarrinho()">
 
 <?php include("MENU.php"); ?>
 
+<<<<<<< HEAD
+<div class="loja-container">
+    <h1 class="loja-titulo">
+        King Mel – Sua Loja de Mel Premium
+    </h1>
+
+    <!-- Barra de ações/Busca/Filtro -->
+    <div class="loja-actions">
+        <div class="actions-left">
+            <button id="btncarrinho" onclick="abrirModal('modalCarrinhoLista')">🛒 Carrinho</button>
+            <button id="btncompras" onclick="abrirModal('modalVisualizarCompras')">🧾 Minhas compras</button>
+        </div>
+
+        <form action="TELA_LOJA.php" method="POST" class="search-filter">
+            <input type="text" name="busca" placeholder="Buscar tipo de mel..." value="<?= htmlspecialchars($busca) ?>">
+            <select name="filtro" aria-label="Ordenar por">
+                <option value="">Ordenar por</option>
+                <option value="preco_desc" <?= ($filtro == 'preco_desc') ? 'selected' : '' ?>>Maior preço</option>
+                <option value="preco_asc" <?= ($filtro == 'preco_asc') ? 'selected' : '' ?>>Menor preço</option>
+                <option value="peso_desc" <?= ($filtro == 'peso_desc') ? 'selected' : '' ?>>Peso maior</option>
+                <option value="peso_asc" <?= ($filtro == 'peso_asc') ? 'selected' : '' ?>>Peso menor</option>
+=======
 <main>
     <h1 class="loja-titulo">
         🐝 King Mel – Sua Loja de Mel Premium
@@ -299,6 +745,7 @@ $compras = VisualizarCompras($pdo);
                 <option value="preco_asc"  <?= (($_POST['filtro'] ?? '') == 'preco_asc')  ? 'selected' : '' ?>>Menor preço</option>
                 <option value="peso_desc"  <?= (($_POST['filtro'] ?? '') == 'peso_desc')  ? 'selected' : '' ?>>Peso maior</option>
                 <option value="peso_asc"   <?= (($_POST['filtro'] ?? '') == 'peso_asc')   ? 'selected' : '' ?>>Peso menor</option>
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
             </select>
             <button type="submit">Pesquisar</button>
         </form>
@@ -347,12 +794,20 @@ $compras = VisualizarCompras($pdo);
     <?php else: ?>
         <p>Nenhum produto encontrado.</p>
     <?php endif; ?>
+<<<<<<< HEAD
+</div>
+=======
 </main>
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
 
 <!-- MODAIS: ADICIONAR AO CARRINHO, VISUALIZAR CARRINHO E COMPRAS -->
 <?php if ($produto_carrinho): ?>
 <div id="modalCarrinho" class="modal">
+<<<<<<< HEAD
+  <div class="modal-content">
+=======
   <div class="modal-content modal-md">
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
     <h2>Adicionar ao Carrinho</h2>
     <form method="POST" action="TELA_LOJA.php" class="modal-produto">
       <input type="hidden" name="id_produto" value="<?= (int)$produto_carrinho['id_produto'] ?>">
@@ -390,7 +845,11 @@ $compras = VisualizarCompras($pdo);
 <?php endif; ?>
 
 <div id="modalCarrinhoLista" class="modal">
+<<<<<<< HEAD
+  <div class="modal-carrinho-content">
+=======
   <div class="modal-content modal-lg">
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
     <h2>Meu Carrinho</h2>
     <form method="POST" action="TELA_LOJA.php">
       <div class="listagem-cards">
@@ -431,15 +890,33 @@ $compras = VisualizarCompras($pdo);
 </div>
 
 <div id="modalVisualizarCompras" class="modal">
+<<<<<<< HEAD
+  <div class="modal-carrinho-content">
+=======
   <div class="modal-content modal-lg">
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
     <h2>Minhas Compras</h2>
     <div class="listagem-cards">
       <?php if (!empty($compras)): foreach($compras as $compra): ?>
         <div class="card-item">
+<<<<<<< HEAD
+          <?php if ($compra && !empty($compra['foto'])): ?>
+            <img src="data:<?= $compra['tipo_foto'] ?>;base64,<?= base64_encode($compra['foto']) ?>" alt="Foto do produto" width="50" height="auto">
+          <?php else: ?>
+            <img src="../IMAGENS/sem-foto.png" alt="Sem imagem">
+          <?php endif; ?>
+=======
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
           <div class="card-content">
             <div class="card-title">Compra #<?= (int)$compra['id_compra_carrinho'] ?></div>
             <div class="card-meta"><?= htmlspecialchars($compra['data_compra']) ?> • Produto: <?= htmlspecialchars($compra['Tipo_mel']) ?></div>
             <div class="card-preco">R$ <?= number_format((float)$compra['preco_total'], 2, ',', '.') ?></div>
+<<<<<<< HEAD
+          </div>
+          <div class="card-actions">
+            <span style="color:<?= ($compra['status']=='Concluída'?'green':'#c0392b') ?>; font-weight:700;">
+              <?= htmlspecialchars($compra['status'] ?? 'Pendente') ?>
+=======
             <div class="foto-produto">
                 <?php if ($compra): ?>
                     <img src="data:<?=$compra['tipo_foto']?>;base64,<?=base64_encode($compra['foto'])?>" alt="Foto do produto" width="50" height="auto">
@@ -449,6 +926,7 @@ $compras = VisualizarCompras($pdo);
           <div class="card-actions">
             <span style="color:<?= ($compra['status']=='Concluída'?'green':'#c0392b') ?>; font-weight:700;">
               <?= htmlspecialchars($compra['status']) ?>
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
             </span>
           </div>
         </div>
@@ -472,10 +950,18 @@ function verificaModalCarrinho(){
 // Fecha modal clicando fora do conteúdo
 document.addEventListener('click', function(e){
     const modal = e.target.closest('.modal');
+<<<<<<< HEAD
+    const content = e.target.closest('.modal-content, .modal-carrinho-content');
+=======
     const content = e.target.closest('.modal-content');
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
     if(modal && !content){ modal.style.display='none'; }
 });
 </script>
 
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> c082375b032df07d26ba6cdef482eb2de869931c
