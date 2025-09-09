@@ -130,14 +130,6 @@ $nome_perfil = isset($_SESSION['perfil']) ? $nomes_perfis[$_SESSION['perfil']] :
                 </a>
             </li>
 
-            <!-- Loja - Admin e Cliente -->
-            <li class="dock-item <?= temAcesso('TELA_LOJA.php') ? '' : 'disabled' ?> <?= ($currentPage == 'TELA_LOJA.php') ? 'active' : '' ?>">
-                <a href="<?= temAcesso('TELA_LOJA.php') ? 'TELA_LOJA.php' : '#' ?>">
-                    <i class="fa-solid fa-chart-bar"></i>
-                    <span class="tooltip"><?= temAcesso('TELA_LOJA.php') ? 'Loja' : 'Acesso negado' ?></span>
-                </a>
-            </li>
-
 
             <!-- Logout - Disponível para todos os perfis logados -->
             <li class="dock-item <?= ($currentPage == '../logout.php') ? 'active' : '' ?>">
