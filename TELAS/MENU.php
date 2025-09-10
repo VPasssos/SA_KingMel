@@ -10,19 +10,19 @@ if (isset($_SESSION['perfil'])) {
     // Administrador (perfil 1) - Acesso completo
     if ($id_perfil == 1) {
         $permissoes = [
-            'TELA_INICIAL.php' => true,
+            'TELA_LOJA.php' => true,
             'TELA_GERENCIAR_PRODUTOS.php' => true,
             'TELA_GERENCIAR_APIARIOS.php' => true,
             'TELA_GERENCIAR_USUARIOS.php' => true,
             'TELA_GERENCIAR_CLIENTES.php' => true,
             'TELA_GERENCIAR_FUNCIONARIOS.php' => true,
-            'TELA_RELATORIOS.php' => true,
-            'TELA_LOJA.php' => true
+            'TELA_RELATORIOS.php' => true
         ];
     }
     // Secretária (perfil 2) - Acesso limitado
     elseif ($id_perfil == 2) {
         $permissoes = [
+            'TELA_LOJA.php' => true,
             'TELA_INICIAL.php' => true,
             'TELA_GERENCIAR_CLIENTES.php' => true,
             'TELA_RELATORIOS.php' => true
@@ -39,7 +39,7 @@ if (isset($_SESSION['perfil'])) {
     // Cliente (perfil 4) - Acesso apenas à tela inicial
     elseif ($id_perfil == 4) {
         $permissoes = [
-            'TELA_INICIAL.php' => true
+            'TELA_LOJA.php' => true
         ];
     }
 }
