@@ -3,7 +3,7 @@ session_start();
 include('../conexao.php');
 
 // ======= PERMISSÃO =======
-if (!isset($_SESSION['perfil']) !=2 && ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 3 && ($_SESSION['perfil'] != 4))) {
+if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 4)) {
     echo "<script>alert('Acesso Negado'); window.location.href='principal.php';</script>";
     exit();
 }
