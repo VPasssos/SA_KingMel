@@ -3,7 +3,7 @@ session_start();
 include('../conexao.php');
 
 // ======= PERMISSÃO =======
-if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 3)) {
+if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 4)) {
     echo "<script>alert('Acesso Negado'); window.location.href='principal.php';</script>";
     exit();
 }
@@ -21,7 +21,6 @@ switch ($filtro) {
 
 // ======= BUSCAS =======
 function buscarProduto($pdo, $busca, $orderBy) {
-    // Mantendo sua lógica e campos usados na listagem + imagem
     $sql = "SELECT 
                 p.id_produto, p.Tipo_mel, p.Data_embalado, p.Peso, p.Preco, p.Quantidade, 
                 p.tipo_foto, p.foto, a.Nome_apiario
@@ -74,7 +73,6 @@ function getIdUsuario($pdo) {
     return (int)$usuario_dados['id_usuario'];
 }
 
-// Corrigido: trazendo imagem do produto para o modal do carrinho
 function listarcarrinho($pdo) {
     $id_usuario = getIdUsuario($pdo);
     $sql = "SELECT 
@@ -162,7 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                VALUES (:id_produto, :qtd_produto, :preco_unitario, :id_apiario, :id_usuario)");
         $stmt->bindParam(':id_produto', $id_produto, PDO::PARAM_INT);
         $stmt->bindParam(':qtd_produto', $qtd_produto, PDO::PARAM_INT);
-        // Observação: sua coluna chama 'preco_unitario', mas armazena o TOTAL do item (mantido)
         $stmt->bindParam(':preco_unitario', $preco_total_item);
         $stmt->bindParam(':id_apiario', $id_apiario, PDO::PARAM_INT);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
@@ -253,16 +250,15 @@ function VisualizarCompras($pdo) {
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
 }
+
 $compras = VisualizarCompras($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>🐝 King Mel – Loja</title>
+    <title>King Mel – Loja</title>
 
     <!-- Google Fonts para título mais bonito -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -272,33 +268,32 @@ $compras = VisualizarCompras($pdo);
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_IMAGENS.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_LOJA2.css">
-
     <script src="../JS/mascaras.js"></script>
 </head>
 <body onload="verificaModalCarrinho()">
 
 <?php include("MENU.php"); ?>
 
-<main>
+<div class="loja-container">
     <h1 class="loja-titulo">
-        🐝 King Mel – Sua Loja de Mel Premium
+        King Mel – Sua Loja de Mel Premium
     </h1>
 
     <!-- Barra de ações/Busca/Filtro -->
-    <div class="ops_prod loja-actions">
+    <div class="loja-actions">
         <div class="actions-left">
             <button id="btncarrinho" onclick="abrirModal('modalCarrinhoLista')">🛒 Carrinho</button>
-            <button id="btncompras"  onclick="abrirModal('modalVisualizarCompras')">🧾 Minhas compras</button>
+            <button id="btncompras" onclick="abrirModal('modalVisualizarCompras')">🧾 Minhas compras</button>
         </div>
 
         <form action="TELA_LOJA.php" method="POST" class="search-filter">
-            <input type="text" name="busca" placeholder="Buscar tipo de mel..." value="<?= htmlspecialchars($_POST['busca'] ?? '') ?>">
+            <input type="text" name="busca" placeholder="Buscar tipo de mel..." value="<?= htmlspecialchars($busca) ?>">
             <select name="filtro" aria-label="Ordenar por">
                 <option value="">Ordenar por</option>
-                <option value="preco_desc" <?= (($_POST['filtro'] ?? '') == 'preco_desc') ? 'selected' : '' ?>>Maior preço</option>
-                <option value="preco_asc"  <?= (($_POST['filtro'] ?? '') == 'preco_asc')  ? 'selected' : '' ?>>Menor preço</option>
-                <option value="peso_desc"  <?= (($_POST['filtro'] ?? '') == 'peso_desc')  ? 'selected' : '' ?>>Peso maior</option>
-                <option value="peso_asc"   <?= (($_POST['filtro'] ?? '') == 'peso_asc')   ? 'selected' : '' ?>>Peso menor</option>
+                <option value="preco_desc" <?= ($filtro == 'preco_desc') ? 'selected' : '' ?>>Maior preço</option>
+                <option value="preco_asc" <?= ($filtro == 'preco_asc') ? 'selected' : '' ?>>Menor preço</option>
+                <option value="peso_desc" <?= ($filtro == 'peso_desc') ? 'selected' : '' ?>>Peso maior</option>
+                <option value="peso_asc" <?= ($filtro == 'peso_asc') ? 'selected' : '' ?>>Peso menor</option>
             </select>
             <button type="submit">Pesquisar</button>
         </form>
@@ -347,12 +342,12 @@ $compras = VisualizarCompras($pdo);
     <?php else: ?>
         <p>Nenhum produto encontrado.</p>
     <?php endif; ?>
-</main>
+</div>
 
 <!-- MODAIS: ADICIONAR AO CARRINHO, VISUALIZAR CARRINHO E COMPRAS -->
 <?php if ($produto_carrinho): ?>
 <div id="modalCarrinho" class="modal">
-  <div class="modal-content modal-md">
+  <div class="modal-content">
     <h2>Adicionar ao Carrinho</h2>
     <form method="POST" action="TELA_LOJA.php" class="modal-produto">
       <input type="hidden" name="id_produto" value="<?= (int)$produto_carrinho['id_produto'] ?>">
@@ -390,7 +385,7 @@ $compras = VisualizarCompras($pdo);
 <?php endif; ?>
 
 <div id="modalCarrinhoLista" class="modal">
-  <div class="modal-content modal-lg">
+  <div class="modal-carrinho-content">
     <h2>Meu Carrinho</h2>
     <form method="POST" action="TELA_LOJA.php">
       <div class="listagem-cards">
@@ -431,24 +426,24 @@ $compras = VisualizarCompras($pdo);
 </div>
 
 <div id="modalVisualizarCompras" class="modal">
-  <div class="modal-content modal-lg">
+  <div class="modal-carrinho-content">
     <h2>Minhas Compras</h2>
     <div class="listagem-cards">
       <?php if (!empty($compras)): foreach($compras as $compra): ?>
         <div class="card-item">
+          <?php if ($compra && !empty($compra['foto'])): ?>
+            <img src="data:<?= $compra['tipo_foto'] ?>;base64,<?= base64_encode($compra['foto']) ?>" alt="Foto do produto" width="50" height="auto">
+          <?php else: ?>
+            <img src="../IMAGENS/sem-foto.png" alt="Sem imagem">
+          <?php endif; ?>
           <div class="card-content">
             <div class="card-title">Compra #<?= (int)$compra['id_compra_carrinho'] ?></div>
             <div class="card-meta"><?= htmlspecialchars($compra['data_compra']) ?> • Produto: <?= htmlspecialchars($compra['Tipo_mel']) ?></div>
             <div class="card-preco">R$ <?= number_format((float)$compra['preco_total'], 2, ',', '.') ?></div>
-            <div class="foto-produto">
-                <?php if ($compra): ?>
-                    <img src="data:<?=$compra['tipo_foto']?>;base64,<?=base64_encode($compra['foto'])?>" alt="Foto do produto" width="50" height="auto">
-                <?php endif; ?>
-            </div>
           </div>
           <div class="card-actions">
             <span style="color:<?= ($compra['status']=='Concluída'?'green':'#c0392b') ?>; font-weight:700;">
-              <?= htmlspecialchars($compra['status']) ?>
+              <?= htmlspecialchars($compra['status'] ?? 'Pendente') ?>
             </span>
           </div>
         </div>
@@ -472,7 +467,7 @@ function verificaModalCarrinho(){
 // Fecha modal clicando fora do conteúdo
 document.addEventListener('click', function(e){
     const modal = e.target.closest('.modal');
-    const content = e.target.closest('.modal-content');
+    const content = e.target.closest('.modal-content, .modal-carrinho-content');
     if(modal && !content){ modal.style.display='none'; }
 });
 </script>
