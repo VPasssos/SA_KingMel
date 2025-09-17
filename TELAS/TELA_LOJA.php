@@ -235,11 +235,34 @@ if (isset($_GET['excluir'])) {
     exit();
 }
 
+// ======= PRODUTO RECEBIDO =======
+if (isset($_GET['recebi'])) {
+  $id_compra_carrinho = (int)$_GET['recebi'];
+
+  try {
+      $pdo->beginTransaction();
+
+      $sql = "UPDATE compra_carrinho SET status = 'finalizada' WHERE id_compra_carrinho = :id_compra_carrinho";
+      $stmt = $pdo->prepare($sql);
+      $stmt->bindParam(':id_compra_carrinho', $id_compra_carrinho, PDO::PARAM_INT);
+      $stmt->execute();
+
+      $pdo->commit();
+      echo "<script>alert('Compra finalizada com sucesso!'); window.location.href='TELA_LOJA.php';</script>";
+  } catch (Exception $e) {
+      $pdo->rollBack();
+      echo "<script>alert('Erro ao finalizar a compra!'); window.location.href='TELA_LOJA.php';</script>";
+  }
+  exit();
+}
+
+
 // ======= VISUALIZAR COMPRAS =======
 function VisualizarCompras($pdo) {
     $id_usuario = getIdUsuario($pdo);
     $sql = "SELECT 
-                c.id_compra_carrinho, u.id_usuario, c.data_compra, c.preco_total, c.status, p.Tipo_mel, p.tipo_foto, p.foto
+                c.id_compra_carrinho, u.id_usuario, c.data_compra, c.preco_total, c.status, 
+                ccp.id_produto, p.Tipo_mel, p.tipo_foto, p.foto
             FROM compra_carrinho AS c
             INNER JOIN usuario AS u ON u.id_usuario = c.id_usuario
             INNER JOIN compra_carrinho_produto as ccp ON ccp.id_compra_carrinho = c.id_compra_carrinho
@@ -251,6 +274,7 @@ function VisualizarCompras($pdo) {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 $compras = VisualizarCompras($pdo);
 ?>
@@ -442,14 +466,18 @@ $compras = VisualizarCompras($pdo);
             <div class="card-preco">R$ <?= number_format((float)$compra['preco_total'], 2, ',', '.') ?></div>
           </div>
           <div class="card-actions">
-            <span style="color:<?= ($compra['status']=='Concluída'?'green':'#c0392b') ?>; font-weight:700;">
+            <span style="color:<?= ($compra['status']=='finalizada'?'green':'#c0392b') ?>; font-weight:700;">
               <?= htmlspecialchars($compra['status'] ?? 'Pendente') ?>
             </span>
           </div>
+          <div class="card-actions">
+              <a href="TELA_LOJA.php?recebi=<?= (int)$compra['id_compra_carrinho'] ?>" onclick="return confirm('Tem certeza que já recebeu o produto?')">Já recebi</a>
+            </div>
         </div>
       <?php endforeach; else: ?>
         <p>Você ainda não fez nenhuma compra.</p>
       <?php endif; ?>
+      
     </div>
     <div class="modal-actions">
       <button type="button" class="btn_acao btn_cancelar" onclick="fecharModal('modalVisualizarCompras')">Fechar</button>

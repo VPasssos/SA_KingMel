@@ -262,7 +262,7 @@ CREATE TABLE `compra_carrinho` (
   `id_usuario` int(11) NOT NULL,
   `data_compra` datetime DEFAULT current_timestamp(),
   `preco_total` decimal(10,2) NOT NULL,
-  `status` enum('pendente','pago','enviado','cancelado') DEFAULT 'pendente'
+  `status` enum('pendente','pago','enviado','cancelado','finalizada') DEFAULT 'pendente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
