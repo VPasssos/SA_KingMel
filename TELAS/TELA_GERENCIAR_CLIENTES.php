@@ -7,7 +7,6 @@ if($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2){
     $_SESSION['mensagem_erro'] = 'Acesso Negado';
     header('Location: principal.php');
     exit();        
-    exit();
 }
 
 // Função para buscar clientes
@@ -47,7 +46,6 @@ if (isset($_GET['excluir'])) {
     header('Location: TELA_GERENCIAR_CLIENTES.php');
     exit();
     }
-    exit();
 }
 
 // Função para adicionar um novo cliente
@@ -58,9 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_cliente']))
     $Email = $_POST['Email'];
     $Data_nascimento = $_POST['Data_nascimento'];
     $Endereco = $_POST['Endereco'];
+    $cidade = $_POST['cidade'];
 
-    $sql = "INSERT INTO cliente (Nome, CPF, Telefone, Email, Data_nascimento, Endereco) 
-            VALUES (:Nome, :CPF, :Telefone, :Email, :Data_nascimento, :Endereco)";
+    $sql = "INSERT INTO cliente (Nome, CPF, Telefone, Email, Data_nascimento, Endereco, cidade) 
+            VALUES (:Nome, :CPF, :Telefone, :Email, :Data_nascimento, :Endereco, :cidade)";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':Nome', $Nome);
     $stmt->bindParam(':CPF', $CPF);
@@ -68,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_cliente']))
     $stmt->bindParam(':Email', $Email);
     $stmt->bindParam(':Data_nascimento', $Data_nascimento);
     $stmt->bindParam(':Endereco', $Endereco);
+    $stmt->bindParam(':cidade', $cidade);
     
     if ($stmt->execute()) {
         $_SESSION['mensagem_sucesso'] = 'Cliente adicionado com sucesso!';
@@ -78,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_cliente']))
     header('Location: TELA_GERENCIAR_CLIENTES.php');
     exit();
     }
-    exit();
 }
 
 // Função para alterar um cliente
@@ -90,9 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_cliente'])) {
     $Email = $_POST['Email'];
     $Data_nascimento = $_POST['Data_nascimento'];
     $Endereco = $_POST['Endereco'];
+    $cidade = $_POST['cidade'];
 
     $sql = "UPDATE cliente SET Nome = :Nome, CPF = :CPF, Telefone = :Telefone, 
-            Email = :Email, Data_nascimento = :Data_nascimento, Endereco = :Endereco 
+            Email = :Email, Data_nascimento = :Data_nascimento, Endereco = :Endereco, cidade = :cidade 
             WHERE id_cliente = :id_cliente";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':id_cliente', $id_cliente);
@@ -102,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_cliente'])) {
     $stmt->bindParam(':Email', $Email);
     $stmt->bindParam(':Data_nascimento', $Data_nascimento);
     $stmt->bindParam(':Endereco', $Endereco);
+    $stmt->bindParam(':cidade', $cidade);
     
     if ($stmt->execute()) {
         $_SESSION['mensagem_sucesso'] = 'Cliente alterado com sucesso!';
@@ -112,7 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alterar_cliente'])) {
     header('Location: TELA_GERENCIAR_CLIENTES.php');
     exit();
     }
-    exit();
 }
 
 // Verifica se há um termo de busca
@@ -179,7 +179,8 @@ if (isset($_GET['editar'])) {
                             <th>Telefone</th>
                             <th>E-mail</th>
                             <th>Data Nasc.</th>
-                            <th>Endereço</th>
+                            <th>Bairro e rua</th>
+                            <th>Cidade</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -193,6 +194,7 @@ if (isset($_GET['editar'])) {
                                 <td><?= htmlspecialchars($cliente['Email']) ?></td>
                                 <td><?= htmlspecialchars($cliente['Data_nascimento']) ?></td>
                                 <td><?= htmlspecialchars($cliente['Endereco']) ?></td>
+                                <td><?= htmlspecialchars($cliente['cidade']) ?></td>
                                 <td>
                                     <a href="TELA_GERENCIAR_CLIENTES.php?editar=<?= htmlspecialchars($cliente['id_cliente']) ?>">Alterar</a>
                                     <a href="TELA_GERENCIAR_CLIENTES.php?excluir=<?= htmlspecialchars($cliente['id_cliente']) ?>" 
@@ -243,7 +245,14 @@ if (isset($_GET['editar'])) {
                     </div>
                 </div>
 
-                <label for="Endereco">Endereço Completo:</label>
+                <div class="form-row">
+                    <div>
+                        <label for="cidade">Cidade:</label>
+                        <input type="text" name="cidade" required>
+                    </div>
+                </div>
+
+                <label for="Endereco">Bairro e rua:</label>
                 <textarea name="Endereco" rows="3" required></textarea>
 
                 <button type="submit" name="adicionar_cliente" class="btn_acao">Adicionar</button>
@@ -289,7 +298,14 @@ if (isset($_GET['editar'])) {
                     </div>
                 </div>
 
-                <label for="Endereco_editar">Endereço Completo:</label>
+                <div class="form-row">
+                    <div>
+                        <label for="cidade">Cidade:</label>
+                        <input type="text" name="cidade" value="<?= htmlspecialchars($cliente_edicao['cidade']) ?>" required>
+                    </div>
+                </div>
+
+                <label for="Endereco_editar">Bairro e rua:</label>
                 <textarea name="Endereco" id="Endereco_editar" rows="3" required><?= htmlspecialchars($cliente_edicao['Endereco']) ?></textarea>
 
                 <button type="submit" name="alterar_cliente" class="btn_acao">Alterar</button>
