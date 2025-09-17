@@ -20,9 +20,9 @@ main {
 
 #dock {
     position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;           
+    left: 20px;     
+    transform: translateY(-50%);
     background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -33,18 +33,18 @@ main {
     max-width: 90%;
 }
 
+#dock_items {
+    display: flex;
+    flex-direction: column;  
+    gap: 15px;              
+    margin: 0;
+    padding: 0;
+}
+
 #dock_content {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-#dock_items {
-    display: flex;
-    list-style: none;
-    gap: 15px;
-    margin: 0;
-    padding: 0;
 }
 
 .dock-item {

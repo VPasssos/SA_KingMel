@@ -291,7 +291,7 @@ $compras = VisualizarCompras($pdo);
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERENCIAR_PRODUTOS.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_IMAGENS.css">
-    <link rel="stylesheet" href="../ESTILOS/ESTILO_LOJA2.css">
+    <link rel="stylesheet" href="../ESTILOS/ESTILO_LOJA.css">
     <script src="../JS/mascaras.js"></script>
 </head>
 <body onload="verificaModalCarrinho()">

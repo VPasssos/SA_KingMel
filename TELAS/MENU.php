@@ -68,7 +68,7 @@ $nome_perfil = isset($_SESSION['perfil']) ? $nomes_perfis[$_SESSION['perfil']] :
     <title>KINGMEL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../ESTILOS/ESTILO_GERAL.css">
-    <link rel="stylesheet" href="../ESTILOS/ESTILO_MENU.css">
+    <link rel="stylesheet" href="../ESTILOS/ESTILO_MENUS.css">
 
 </head>
 <body>
