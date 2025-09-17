@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buscar_vendas'])) {
                             <?php endforeach; ?>
                         </select>
                     </div>
-
+                                
                     <div class="form-group">
                         <label for="id_produto">Produto:</label>
                         <select name="id_produto" id="id_produto" required onchange="atualizarPreco()">
