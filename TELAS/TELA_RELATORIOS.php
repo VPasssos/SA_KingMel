@@ -30,7 +30,7 @@ function getVendasPorPeriodo($pdo, $data_inicio, $data_fim) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Produtos Mais Vendidos (ajustado para preco_unitario = total do item)
+// Produtos Mais Vendidos
 function getProdutosMaisVendidos($pdo, $data_inicio, $data_fim) {
     $sql = "SELECT 
                 p.Tipo_mel,
@@ -108,12 +108,36 @@ function getVendasMensais($pdo, $ano) {
 }
 
 // ================= PROCESSAR FILTROS =================
-// Valores exibidos no form (apenas data) — safe defaults
 $data_inicio_input = isset($_POST['data_inicio']) ? $_POST['data_inicio'] : '2000-01-01';
 $data_fim_input    = isset($_POST['data_fim']) ? $_POST['data_fim'] : date('Y-m-d');
 $ano_grafico       = isset($_POST['ano_grafico']) ? $_POST['ano_grafico'] : date('Y');
 
-// Convertemos para intervalos datetime completos para usar no SQL (inclusivo)
+// NOVO: filtro trimestral
+$trimestre_input = isset($_POST['trimestre']) ? $_POST['trimestre'] : '';
+
+if ($trimestre_input != '') {
+    $ano_atual = date('Y');
+    switch ($trimestre_input) {
+        case '1':
+            $data_inicio_input = "$ano_atual-01-01";
+            $data_fim_input = "$ano_atual-03-31";
+            break;
+        case '2':
+            $data_inicio_input = "$ano_atual-04-01";
+            $data_fim_input = "$ano_atual-06-30";
+            break;
+        case '3':
+            $data_inicio_input = "$ano_atual-07-01";
+            $data_fim_input = "$ano_atual-09-30";
+            break;
+        case '4':
+            $data_inicio_input = "$ano_atual-10-01";
+            $data_fim_input = "$ano_atual-12-31";
+            break;
+    }
+}
+
+// Intervalos datetime completos
 $data_inicio_sql = $data_inicio_input . ' 00:00:00';
 $data_fim_sql    = $data_fim_input    . ' 23:59:59';
 
@@ -159,6 +183,18 @@ foreach($vendas_mensais as $venda){
             <div class="form-group">
                 <label for="data_fim">Data Fim:</label>
                 <input type="date" name="data_fim" value="<?= htmlspecialchars($data_fim_input) ?>" required>
+            </div>
+
+            <!-- NOVO: Filtro Trimestral -->
+            <div class="form-group">
+                <label for="trimestre">Trimestre:</label>
+                <select name="trimestre">
+                    <option value="">-- Selecionar --</option>
+                    <option value="1" <?= $trimestre_input=='1'?'selected':'' ?>>1º Trimestre (Jan-Mar)</option>
+                    <option value="2" <?= $trimestre_input=='2'?'selected':'' ?>>2º Trimestre (Abr-Jun)</option>
+                    <option value="3" <?= $trimestre_input=='3'?'selected':'' ?>>3º Trimestre (Jul-Set)</option>
+                    <option value="4" <?= $trimestre_input=='4'?'selected':'' ?>>4º Trimestre (Out-Dez)</option>
+                </select>
             </div>
             
             <div class="form-group">
