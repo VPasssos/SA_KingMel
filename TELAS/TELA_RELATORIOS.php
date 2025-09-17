@@ -8,7 +8,7 @@ if($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2){
     exit();
 }
 
-// ================= FUNÇÕES DE RELATÓRIOS (APENAS LOJA) =================
+// ================= FUNÇÕES DE RELATÓRIOS =================
 
 // Relatório de Vendas por Período
 function getVendasPorPeriodo($pdo, $data_inicio, $data_fim) {
@@ -111,28 +111,27 @@ function getVendasMensais($pdo, $ano) {
 $data_inicio_input = isset($_POST['data_inicio']) ? $_POST['data_inicio'] : '2000-01-01';
 $data_fim_input    = isset($_POST['data_fim']) ? $_POST['data_fim'] : date('Y-m-d');
 $ano_grafico       = isset($_POST['ano_grafico']) ? $_POST['ano_grafico'] : date('Y');
+$trimestre_input   = isset($_POST['trimestre']) ? $_POST['trimestre'] : '';
 
-// NOVO: filtro trimestral
-$trimestre_input = isset($_POST['trimestre']) ? $_POST['trimestre'] : '';
-
+// Se trimestre selecionado, sobrescreve datas
 if ($trimestre_input != '') {
-    $ano_atual = date('Y');
+    $ano_atual = $ano_grafico; // usa o ano escolhido
     switch ($trimestre_input) {
         case '1':
             $data_inicio_input = "$ano_atual-01-01";
-            $data_fim_input = "$ano_atual-03-31";
+            $data_fim_input    = "$ano_atual-03-31";
             break;
         case '2':
             $data_inicio_input = "$ano_atual-04-01";
-            $data_fim_input = "$ano_atual-06-30";
+            $data_fim_input    = "$ano_atual-06-30";
             break;
         case '3':
             $data_inicio_input = "$ano_atual-07-01";
-            $data_fim_input = "$ano_atual-09-30";
+            $data_fim_input    = "$ano_atual-09-30";
             break;
         case '4':
             $data_inicio_input = "$ano_atual-10-01";
-            $data_fim_input = "$ano_atual-12-31";
+            $data_fim_input    = "$ano_atual-12-31";
             break;
     }
 }
@@ -154,6 +153,12 @@ foreach($vendas_mensais as $venda){
     if($venda['mes']>=1 && $venda['mes']<=12){
         $dados_grafico[$venda['mes']-1] = (float)$venda['valor_total'];
     }
+}
+
+// Texto extra para exibir trimestre nos títulos
+$texto_periodo = '';
+if ($trimestre_input != '') {
+    $texto_periodo = " - {$trimestre_input}º Trimestre de $ano_grafico";
 }
 ?>
 <!DOCTYPE html>
@@ -224,13 +229,13 @@ foreach($vendas_mensais as $venda){
 
     <!-- Gráfico -->
     <div class="grafico-container">
-        <h2>Vendas Mensais - <?= $ano_grafico ?></h2>
+        <h2>Vendas Mensais - <?= $ano_grafico ?><?= $texto_periodo ?></h2>
         <canvas id="graficoVendas"></canvas>
     </div>
 
     <!-- Vendas no Período -->
     <div class="relatorio-section">
-        <h2>Vendas no Período</h2>
+        <h2>Vendas<?= $texto_periodo ?></h2>
         <?php if (!empty($vendas_periodo)): ?>
         <table class="table">
             <thead><tr><th>Nº Pedido</th><th>Data</th><th>Cliente</th><th>Valor</th><th>Itens</th></tr></thead>
@@ -246,12 +251,12 @@ foreach($vendas_mensais as $venda){
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <?php else: ?><p>Nenhuma venda no período.</p><?php endif; ?>
+        <?php else: ?><p>Nenhuma venda encontrada.</p><?php endif; ?>
     </div>
 
     <!-- Produtos Mais Vendidos -->
     <div class="relatorio-section">
-        <h2>Produtos Mais Vendidos</h2>
+        <h2>Produtos Mais Vendidos<?= $texto_periodo ?></h2>
         <?php if (!empty($produtos_mais_vendidos)): ?>
         <table class="table">
             <thead><tr><th>Produto</th><th>Apiário</th><th>Qtd</th><th>Valor Total</th></tr></thead>
@@ -271,7 +276,7 @@ foreach($vendas_mensais as $venda){
 
     <!-- Clientes -->
     <div class="relatorio-section">
-        <h2>Clientes que Mais Compram</h2>
+        <h2>Clientes que Mais Compram<?= $texto_periodo ?></h2>
         <?php if (!empty($clientes_mais_compram)): ?>
         <table class="table">
             <thead><tr><th>Cliente</th><th>Email</th><th>Pedidos</th><th>Valor Total</th></tr></thead>
