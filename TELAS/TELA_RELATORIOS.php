@@ -35,7 +35,7 @@ function getProdutosMaisVendidos($pdo, $data_inicio, $data_fim) {
     $sql = "SELECT 
                 p.Tipo_mel,
                 SUM(ccp.qtd_produto) AS total_vendido,
-                SUM(ccp.preco_unitario) AS valor_total,
+                SUM(ccp.preco_unitario * ccp.qtd_produto) AS valor_total,
                 a.Nome_apiario
             FROM compra_carrinho_produto ccp
             INNER JOIN produto p ON ccp.id_produto = p.id_produto
@@ -155,6 +155,29 @@ foreach($vendas_mensais as $venda){
     }
 }
 
+// Preparar dados para gráficos de pizza
+// Dados para gráfico de produtos mais vendidos
+$produtos_labels = [];
+$produtos_data = [];
+$produtos_cores = [];
+
+foreach ($produtos_mais_vendidos as $produto) {
+    $produtos_labels[] = $produto['Tipo_mel'];
+    $produtos_data[] = (float)$produto['total_vendido'];
+    $produtos_cores[] = sprintf('rgba(%d, %d, %d, 0.7)', rand(50, 200), rand(50, 200), rand(50, 200));
+}
+
+// Dados para gráfico de clientes que mais compram
+$clientes_labels = [];
+$clientes_data = [];
+$clientes_cores = [];
+
+foreach ($clientes_mais_compram as $cliente) {
+    $clientes_labels[] = $cliente['cliente'];
+    $clientes_data[] = (float)$cliente['valor_total_gasto'];
+    $clientes_cores[] = sprintf('rgba(%d, %d, %d, 0.7)', rand(50, 200), rand(50, 200), rand(50, 200));
+}
+
 // Texto extra para exibir trimestre nos títulos
 $texto_periodo = '';
 if ($trimestre_input != '') {
@@ -227,15 +250,35 @@ if ($trimestre_input != '') {
         <div class="stat-card"><div class="stat-label">Clientes Ativos</div><div class="stat-number"><?= $estatisticas['clientes_ativos'] ?></div></div>
     </div>
 
-    <!-- Gráfico -->
+    <!-- Gráfico de Vendas Mensais -->
     <div class="grafico-container">
         <h2>Vendas Mensais - <?= $ano_grafico ?><?= $texto_periodo ?></h2>
         <canvas id="graficoVendas"></canvas>
     </div>
 
-    <!-- Vendas no Período -->
+    <!-- Gráfico de Produtos Mais Vendidos -->
+    <div class="grafico-container">
+        <h2>Produtos Mais Vendidos<?= $texto_periodo ?></h2>
+        <?php if (!empty($produtos_mais_vendidos)): ?>
+        <div class="chart-container" style="position: relative; height:400px; width:100%">
+            <canvas id="graficoProdutos"></canvas>
+        </div>
+        <?php else: ?><p>Nenhum produto vendido.</p><?php endif; ?>
+    </div>
+
+    <!-- Gráfico de Clientes que Mais Compram -->
+    <div class="grafico-container">
+        <h2>Clientes que Mais Compram<?= $texto_periodo ?></h2>
+        <?php if (!empty($clientes_mais_compram)): ?>
+        <div class="chart-container" style="position: relative; height:400px; width:100%">
+            <canvas id="graficoClientes"></canvas>
+        </div>
+        <?php else: ?><p>Nenhum cliente encontrado.</p><?php endif; ?>
+    </div>
+
+    <!-- Vendas no Período (mantido como tabela para detalhes) -->
     <div class="relatorio-section">
-        <h2>Vendas<?= $texto_periodo ?></h2>
+        <h2>Detalhes das Vendas<?= $texto_periodo ?></h2>
         <?php if (!empty($vendas_periodo)): ?>
         <table class="table">
             <thead><tr><th>Nº Pedido</th><th>Data</th><th>Cliente</th><th>Valor</th><th>Itens</th></tr></thead>
@@ -253,51 +296,12 @@ if ($trimestre_input != '') {
         </table>
         <?php else: ?><p>Nenhuma venda encontrada.</p><?php endif; ?>
     </div>
-
-    <!-- Produtos Mais Vendidos -->
-    <div class="relatorio-section">
-        <h2>Produtos Mais Vendidos<?= $texto_periodo ?></h2>
-        <?php if (!empty($produtos_mais_vendidos)): ?>
-        <table class="table">
-            <thead><tr><th>Produto</th><th>Apiário</th><th>Qtd</th><th>Valor Total</th></tr></thead>
-            <tbody>
-                <?php foreach ($produtos_mais_vendidos as $p): ?>
-                <tr>
-                    <td><?= htmlspecialchars($p['Tipo_mel']) ?></td>
-                    <td><?= htmlspecialchars($p['Nome_apiario'] ?? 'Não vinculado') ?></td>
-                    <td><?= $p['total_vendido'] ?></td>
-                    <td>R$ <?= number_format($p['valor_total'],2,',','.') ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <?php else: ?><p>Nenhum produto vendido.</p><?php endif; ?>
-    </div>
-
-    <!-- Clientes -->
-    <div class="relatorio-section">
-        <h2>Clientes que Mais Compram<?= $texto_periodo ?></h2>
-        <?php if (!empty($clientes_mais_compram)): ?>
-        <table class="table">
-            <thead><tr><th>Cliente</th><th>Email</th><th>Pedidos</th><th>Valor Total</th></tr></thead>
-            <tbody>
-                <?php foreach ($clientes_mais_compram as $c): ?>
-                <tr>
-                    <td><?= htmlspecialchars($c['cliente']) ?></td>
-                    <td><?= htmlspecialchars($c['email']) ?></td>
-                    <td><?= $c['total_pedidos'] ?></td>
-                    <td>R$ <?= number_format($c['valor_total_gasto'],2,',','.') ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <?php else: ?><p>Nenhum cliente encontrado.</p><?php endif; ?>
-    </div>
 </main>
 
 <script>
-const ctx = document.getElementById('graficoVendas').getContext('2d');
-new Chart(ctx,{
+// Gráfico de Vendas Mensais (barras)
+const ctxVendas = document.getElementById('graficoVendas').getContext('2d');
+new Chart(ctxVendas,{
     type:'bar',
     data:{
         labels:<?= json_encode($meses) ?>,
@@ -306,8 +310,100 @@ new Chart(ctx,{
             data:<?= json_encode($dados_grafico) ?>,
             backgroundColor:'rgba(224,165,0,0.7)'
         }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Vendas Mensais'
+            }
+        }
     }
 });
+
+// Gráfico de Produtos Mais Vendidos (pizza)
+<?php if (!empty($produtos_mais_vendidos)): ?>
+const ctxProdutos = document.getElementById('graficoProdutos').getContext('2d');
+new Chart(ctxProdutos, {
+    type: 'pie',
+    data: {
+        labels: <?= json_encode($produtos_labels) ?>,
+        datasets: [{
+            data: <?= json_encode($produtos_data) ?>,
+            backgroundColor: <?= json_encode($produtos_cores) ?>,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+            },
+            title: {
+                display: true,
+                text: 'Produtos Mais Vendidos (Quantidade)'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        let value = context.raw || 0;
+                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        let percentage = Math.round((value / total) * 100);
+                        return `${label}: ${value} unidades (${percentage}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+<?php endif; ?>
+
+// Gráfico de Clientes que Mais Compram (pizza)
+<?php if (!empty($clientes_mais_compram)): ?>
+const ctxClientes = document.getElementById('graficoClientes').getContext('2d');
+new Chart(ctxClientes, {
+    type: 'pie',
+    data: {
+        labels: <?= json_encode($clientes_labels) ?>,
+        datasets: [{
+            data: <?= json_encode($clientes_data) ?>,
+            backgroundColor: <?= json_encode($clientes_cores) ?>,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+            },
+            title: {
+                display: true,
+                text: 'Clientes que Mais Compram (Valor Gasto)'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        let value = context.raw || 0;
+                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        let percentage = Math.round((value / total) * 100);
+                        return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+<?php endif; ?>
 </script>
 </body>
 </html>
