@@ -408,7 +408,7 @@ if (isset($_GET['repor'])) {
                             <td><?= htmlspecialchars($produto['Apiarios'] ?? 'Não vinculado') ?></td>
                             <td>
                                 <?php if (!empty($produto['foto'])): ?>
-                                    <img src="data:image/jpeg;base64,<?= base64_encode($produto['foto']) ?>" alt="Foto do produto" width="50" height="auto">
+                                    <img src="data:image/jpeg;base64,<?= base64_encode($produto['foto']) ?>" alt="Foto do produto">
                                 <?php else: ?>
                                     —
                                 <?php endif; ?>
